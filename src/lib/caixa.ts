@@ -1,23 +1,14 @@
 import "server-only";
 
+import { FORMAS_PAGAMENTO } from "@/lib/pagamentos";
 import { prisma } from "@/lib/prisma";
 
-/** Formas de pagamento aceitas no balcão. */
-export const FORMAS_PAGAMENTO = [
-  "DINHEIRO",
-  "PIX",
-  "DEBITO",
-  "CREDITO",
-] as const;
-
-export type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number];
-
-export const ROTULO_PAGAMENTO: Record<FormaPagamento, string> = {
-  DINHEIRO: "Dinheiro",
-  PIX: "Pix",
-  DEBITO: "Débito",
-  CREDITO: "Crédito",
-};
+// Reexporta para quem já consome estas constantes via lib/caixa.
+export {
+  FORMAS_PAGAMENTO,
+  ROTULO_PAGAMENTO,
+  type FormaPagamento,
+} from "@/lib/pagamentos";
 
 export async function buscarCaixaAberto() {
   return prisma.caixa.findFirst({
