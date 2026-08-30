@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IconeAlerta, IconeOk } from "@/components/icones";
 import { formatarDataLonga, formatarHora, nomeDoMes } from "@/lib/datas";
 import { formatarCentavos } from "@/lib/dinheiro";
+import { exigirDono } from "@/lib/autenticacao";
 import { carregarPainel } from "@/lib/painel";
 
 export const metadata = { title: "Painel" };
@@ -33,6 +34,9 @@ function Total({
 }
 
 export default async function PaginaPainel() {
+  // Faturamento e margem são do dono; o balconista é desviado para o PDV.
+  await exigirDono();
+
   const { agora, hoje, mes, produtosEmFalta, caixaAberto, totalProdutos } =
     await carregarPainel();
 
