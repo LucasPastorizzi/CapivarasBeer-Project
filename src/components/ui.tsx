@@ -145,3 +145,128 @@ export function Aviso({
     </p>
   );
 }
+
+/**
+ * Campo de dinheiro. Teclado numérico no celular, prefixo fixo em R$ e sempre
+ * alinhado à direita — coluna de valor só é conferível alinhada pela unidade.
+ */
+export function CampoDinheiro({
+  rotulo,
+  id,
+  dica,
+  erro,
+  ...resto
+}: ComponentProps<"input"> & {
+  rotulo: string;
+  id: string;
+  dica?: ReactNode;
+  erro?: string;
+}) {
+  const idDica = dica ? `${id}-dica` : undefined;
+  const idErro = erro ? `${id}-erro` : undefined;
+
+  return (
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="block text-sm font-medium text-ink">
+        {rotulo}
+      </label>
+      <div
+        className={
+          "flex items-center rounded-campo border bg-surface-alto " +
+          "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-neon " +
+          (erro ? "border-perigo" : "border-borda hover:border-borda-forte")
+        }
+      >
+        <span aria-hidden className="pl-3 text-sm text-ink-medio">
+          R$
+        </span>
+        <input
+          {...resto}
+          id={id}
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          placeholder="0,00"
+          aria-invalid={erro ? true : undefined}
+          aria-describedby={[idDica, idErro].filter(Boolean).join(" ") || undefined}
+          data-numerico
+          className="w-full bg-transparent px-2 py-2 text-right text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        />
+      </div>
+      {dica && (
+        <p id={idDica} className="text-xs text-ink-fraco">
+          {dica}
+        </p>
+      )}
+      {erro && (
+        <p id={idErro} className="text-xs text-perigo">
+          {erro}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Painel: a única moldura de conteúdo do sistema. Nunca aninhado. */
+export function Painel({
+  titulo,
+  acao,
+  children,
+}: {
+  titulo?: string;
+  acao?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-painel border border-borda bg-surface">
+      {titulo && (
+        <header className="flex items-center justify-between gap-3 border-b border-borda px-5 py-3">
+          <h2 className="text-sm font-semibold">{titulo}</h2>
+          {acao}
+        </header>
+      )}
+      <div className="p-5">{children}</div>
+    </section>
+  );
+}
+
+/** Linha rótulo/valor de um extrato. */
+export function Linha({
+  rotulo,
+  valor,
+  apoio,
+  destaque = false,
+  tom,
+}: {
+  rotulo: string;
+  valor: string;
+  apoio?: string;
+  destaque?: boolean;
+  tom?: "ok" | "perigo" | "alerta";
+}) {
+  const cor =
+    tom === "ok"
+      ? "text-ok"
+      : tom === "perigo"
+        ? "text-perigo"
+        : tom === "alerta"
+          ? "text-alerta"
+          : destaque
+            ? "text-ink"
+            : "text-ink";
+
+  return (
+    <div className="flex items-baseline justify-between gap-4 py-1.5">
+      <span className={destaque ? "text-sm font-medium" : "text-sm text-ink-medio"}>
+        {rotulo}
+        {apoio && <span className="ml-1.5 text-xs text-ink-fraco">{apoio}</span>}
+      </span>
+      <span
+        data-numerico
+        className={`${destaque ? "text-base font-semibold" : "text-sm"} ${cor}`}
+      >
+        {valor}
+      </span>
+    </div>
+  );
+}
