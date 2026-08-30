@@ -1,0 +1,184 @@
+// Schema do sistema de gestão do Capivaras Beer.
+//
+// Convenções adotadas:
+// - Todo valor monetário é armazenado em CENTAVOS (Int), nunca em float.
+//   Dinheiro em ponto flutuante acumula erro de arredondamento e num sistema
+//   de vendas isso vira divergência de caixa no fim do dia.
+// - Campos de "tipo"/"status" são String porque o SQLite não suporta enum no
+//   Prisma. Os valores aceitos estão documentados em cada campo e validados
+//   na camada de aplicação, o que mantém o schema portável para PostgreSQL.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+/// Quem opera o sistema. `papel` = "DONO" (acesso total) | "BALCONISTA" (só PDV).
+model Usuario {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  papel     String   @default("BALCONISTA")
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now())
+
+  caixasAbertos     Caixa[]
+  vendas            Venda[]
+  movimentosEstoque MovimentoEstoque[]
+  movimentosCaixa   MovimentoCaixa[]
+
+  @@index([email])
+}
+
+/// Agrupamento de produtos: Cerveja, Destilado, Refrigerante, Gelo, Tabacaria...
+model Categoria {
+  id       String   @id @default(cuid())
+  nome     String   @unique
+  cor      String   @default("#f59e0b")
+  criadoEm DateTime @default(now())
+
+  produtos Produto[]
+}
+
+model Produto {
+  id           String  @id @default(cuid())
+  nome         String
+  codigoBarras String? @unique
+  categoriaId  String
+
+  /// Quanto o Capivaras paga no fornecedor, em centavos.
+  precoCustoCentavos Int @default(0)
+  /// Quanto o cliente paga, em centavos.
+  precoVendaCentavos Int
+
+  estoqueAtual  Int    @default(0)
+  estoqueMinimo Int    @default(0)
+  unidade       String @default("UN")
+
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  categoria  Categoria          @relation(fields: [categoriaId], references: [id])
+  itensVenda ItemVenda[]
+  movimentos MovimentoEstoque[]
+
+  @@index([categoriaId])
+  @@index([nome])
+}
+
+/// Trilha de auditoria do estoque. Toda alteração de `Produto.estoqueAtual`
+/// nasce de um registro aqui, para que a contagem seja sempre reconstituível.
+/// `tipo` = "ENTRADA" | "SAIDA_VENDA" | "AJUSTE" | "PERDA"
+model MovimentoEstoque {
+  id        String @id @default(cuid())
+  produtoId String
+  tipo      String
+
+  /// Positiva em entradas, negativa em saídas/perdas.
+  quantidade            Int
+  custoUnitarioCentavos Int?
+  observacao            String?
+  vendaId               String?
+  usuarioId             String
+  criadoEm              DateTime @default(now())
+
+  produto Produto @relation(fields: [produtoId], references: [id])
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  venda   Venda?  @relation(fields: [vendaId], references: [id])
+
+  @@index([produtoId])
+  @@index([criadoEm])
+}
+
+/// Sessão de trabalho do balcão. `status` = "ABERTO" | "FECHADO".
+model Caixa {
+  id                      String    @id @default(cuid())
+  usuarioAberturaId       String
+  valorAberturaCentavos   Int       @default(0)
+  abertoEm                DateTime  @default(now())
+  fechadoEm               DateTime?
+  /// Valor que o operador contou na gaveta ao fechar. A diferença para o
+  /// esperado é a quebra de caixa do turno.
+  valorFechamentoCentavos Int?
+  status                  String    @default("ABERTO")
+  observacao              String?
+
+  usuarioAbertura Usuario          @relation(fields: [usuarioAberturaId], references: [id])
+  vendas          Venda[]
+  movimentos      MovimentoCaixa[]
+
+  @@index([abertoEm])
+  @@index([status])
+}
+
+/// Entrada ou retirada de dinheiro da gaveta fora de uma venda.
+/// `tipo` = "SANGRIA" (retirada) | "SUPRIMENTO" (reforço).
+model MovimentoCaixa {
+  id            String   @id @default(cuid())
+  caixaId       String
+  tipo          String
+  valorCentavos Int
+  motivo        String
+  usuarioId     String
+  criadoEm      DateTime @default(now())
+
+  caixa   Caixa   @relation(fields: [caixaId], references: [id])
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([caixaId])
+}
+
+/// `formaPagamento` = "DINHEIRO" | "PIX" | "DEBITO" | "CREDITO"
+/// `status` = "CONCLUIDA" | "CANCELADA"
+model Venda {
+  id        String @id @default(cuid())
+  /// Número sequencial legível para o cupom. O SQLite não permite
+  /// autoincrement fora da chave primária, então é atribuído dentro da
+  /// transação da venda (último número + 1).
+  numero    Int    @unique
+  caixaId   String
+  usuarioId String
+
+  subtotalCentavos Int
+  descontoCentavos Int @default(0)
+  totalCentavos    Int
+
+  formaPagamento String
+  status         String    @default("CONCLUIDA")
+  criadoEm       DateTime  @default(now())
+  canceladaEm    DateTime?
+
+  caixa             Caixa              @relation(fields: [caixaId], references: [id])
+  usuario           Usuario            @relation(fields: [usuarioId], references: [id])
+  itens             ItemVenda[]
+  movimentosEstoque MovimentoEstoque[]
+
+  @@index([criadoEm])
+  @@index([caixaId])
+  @@index([status])
+}
+
+/// Linha de uma venda. Preço e custo são copiados do produto no momento da
+/// venda: se o fornecedor reajustar amanhã, o relatório de margem de ontem
+/// continua correto.
+model ItemVenda {
+  id                    String @id @default(cuid())
+  vendaId               String
+  produtoId             String
+  quantidade            Int
+  precoUnitarioCentavos Int
+  custoUnitarioCentavos Int    @default(0)
+  subtotalCentavos      Int
+
+  venda   Venda   @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id])
+
+  @@index([vendaId])
+  @@index([produtoId])
+}
