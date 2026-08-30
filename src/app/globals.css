@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
+/* Sistema visual do Capivaras Beer — ver DESIGN.md para as razões de cada
+   escolha. Neutros levemente quentes (matiz 75, o mesmo da madeira do logo),
+   acento dourado da marca, anel de foco no azul do neon da fachada. */
+@theme {
+  /* Superfícies, da mais funda para a mais elevada. */
+  --color-sidebar: oklch(0.135 0.007 75);
+  --color-bg: oklch(0.155 0.008 75);
+  --color-surface: oklch(0.205 0.01 75);
+  --color-surface-alto: oklch(0.255 0.012 75);
+
+  --color-borda: oklch(0.3 0.012 75);
+  --color-borda-forte: oklch(0.38 0.014 75);
+
+  /* Texto. Nenhum destes fica abaixo de 4.5:1 em nenhuma superfície acima. */
+  --color-ink: oklch(0.965 0.004 85);
+  --color-ink-medio: oklch(0.76 0.012 85);
+  --color-ink-fraco: oklch(0.64 0.014 85);
+
+  /* Acento da marca: ação primária e seleção, nunca decoração. */
+  --color-ouro: oklch(0.8 0.13 82);
+  --color-ouro-forte: oklch(0.72 0.145 78);
+  /* O azul do neon da fachada, reservado ao anel de foco e a links. */
+  --color-neon: oklch(0.72 0.15 240);
+
+  --color-ok: oklch(0.76 0.15 152);
+  --color-alerta: oklch(0.78 0.16 55);
+  --color-perigo: oklch(0.68 0.19 25);
+
+  /* Fundos de estado: tinta da própria cor sobre a superfície, em vez de
+     cinza esmaecido, que sobre fundo colorido sempre parece sujo. */
+  --color-ok-fundo: oklch(0.76 0.15 152 / 0.14);
+  --color-alerta-fundo: oklch(0.78 0.16 55 / 0.14);
+  --color-perigo-fundo: oklch(0.68 0.19 25 / 0.14);
+  --color-ouro-fundo: oklch(0.8 0.13 82 / 0.14);
+
+  /* Escala fixa em rem, razão ~1.2. Produto não usa tipografia fluida. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+
+  --radius-campo: 0.5rem;
+  --radius-painel: 0.75rem;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-saida: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Escala semântica de empilhamento, usada como z-[var(--z-fixo)]. O Tailwind
+   não tem namespace de tema para z-index, então estes ficam fora do @theme.
+   Nunca valores avulsos como 999. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --z-suspenso: 10;
+  --z-fixo: 20;
+  --z-fundo-modal: 30;
+  --z-modal: 40;
+  --z-aviso: 50;
+  --z-dica: 60;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: dark;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  /* O operador trabalha no teclado e com leitor de código de barras: onde o
+     foco está precisa ser óbvio a um metro de distância. */
+  :focus-visible {
+    outline: 2px solid var(--color-neon);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::placeholder {
+    color: var(--color-ink-medio);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Coluna de valores só é conferível se os dígitos tiverem largura igual. */
+  table,
+  [data-numerico] {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
