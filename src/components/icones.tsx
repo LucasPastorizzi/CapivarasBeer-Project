@@ -101,3 +101,13 @@ export function IconeAssistente({ className }: Props) {
     </svg>
   );
 }
+
+export function IconeCompras({ className }: Props) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6.5 7.5V6a3.2 3.2 0 0 1 6.4 0v1.5" />
+      <path d="M4.2 7.5h11l1 12.3a1 1 0 0 1-1 1.1H4.2a1 1 0 0 1-1-1.1z" />
+      <path d="M17.5 12.5h3.3M19.2 10.8v3.4" />
+    </svg>
+  );
+}

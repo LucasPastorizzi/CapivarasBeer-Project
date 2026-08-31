@@ -27,6 +27,7 @@ type ProdutoExistente = {
   estoqueMinimo: number;
   unidade: string;
   codigoBarras: string | null;
+  multiploCompra: number;
 };
 
 export function FormularioProduto({
@@ -190,6 +191,17 @@ export function FormularioProduto({
           dica="UN, KG, CX…"
         />
       )}
+
+      <Campo
+        id="multiploCompra"
+        name="multiploCompra"
+        rotulo="Vem em embalagem de"
+        type="number"
+        min={1}
+        step={1}
+        defaultValue={produto?.multiploCompra ?? 1}
+        dica="Quantas unidades o fornecedor vende junto. Caixa de 12, fardo de 10. A sugestão de compra arredonda para cima até esse número."
+      />
 
       <Campo
         id="codigoBarras"

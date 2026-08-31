@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   IconeAssistente,
   IconeCaixa,
+  IconeCompras,
   IconeEstoque,
   IconePainel,
   IconePdv,
@@ -43,6 +44,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
       { href: "/", rotulo: "Painel", Icone: IconePainel, soDono: true },
       { href: "/produtos", rotulo: "Produtos", Icone: IconeProdutos, soDono: true },
       { href: "/estoque", rotulo: "Estoque", Icone: IconeEstoque, soDono: true },
+      { href: "/compras", rotulo: "Compras", Icone: IconeCompras, soDono: true },
       { href: "/relatorios", rotulo: "Relatórios", Icone: IconeRelatorios, soDono: true },
       { href: "/assistente", rotulo: "Assistente", Icone: IconeAssistente, soDono: true },
     ],

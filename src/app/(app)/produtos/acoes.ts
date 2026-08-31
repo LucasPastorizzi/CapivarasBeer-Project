@@ -46,6 +46,12 @@ const esquema = z.object({
   precoCusto: dinheiroOpcional("o preço de custo"),
   precoVenda: dinheiro("o preço de venda"),
   estoqueMinimo: inteiro("O estoque mínimo"),
+  multiploCompra: z
+    .string()
+    .transform((t) => (t.trim() === "" ? 1 : Number(t)))
+    .refine((n) => Number.isInteger(n) && n >= 1, {
+      message: "A embalagem precisa ser um número inteiro de 1 para cima.",
+    }),
   unidade: z.string().trim().min(1).max(6).default("UN"),
   // Vazio vira null: string vazia em coluna única faria o segundo produto
   // sem código colidir com o primeiro.
@@ -63,6 +69,7 @@ function lerFormulario(dados: FormData) {
     precoCusto: String(dados.get("precoCusto") ?? "0"),
     precoVenda: String(dados.get("precoVenda") ?? ""),
     estoqueMinimo: String(dados.get("estoqueMinimo") ?? "0"),
+    multiploCompra: String(dados.get("multiploCompra") ?? "1"),
     unidade: String(dados.get("unidade") || "UN"),
     codigoBarras: String(dados.get("codigoBarras") ?? ""),
   };
@@ -103,6 +110,7 @@ export async function criarProduto(
           precoCustoCentavos: analise.data.precoCusto,
           precoVendaCentavos: analise.data.precoVenda,
           estoqueMinimo: analise.data.estoqueMinimo,
+          multiploCompra: analise.data.multiploCompra,
           unidade: analise.data.unidade,
           codigoBarras: analise.data.codigoBarras,
           estoqueAtual: estoqueInicial,
@@ -137,6 +145,7 @@ export async function criarProduto(
   }
 
   revalidatePath("/produtos");
+  revalidatePath("/compras");
   revalidatePath("/pdv");
   redirect(`/produtos/${id}?salvo=1`);
 }
@@ -162,6 +171,7 @@ export async function atualizarProduto(
         precoCustoCentavos: analise.data.precoCusto,
         precoVendaCentavos: analise.data.precoVenda,
         estoqueMinimo: analise.data.estoqueMinimo,
+        multiploCompra: analise.data.multiploCompra,
         unidade: analise.data.unidade,
         codigoBarras: analise.data.codigoBarras,
       },

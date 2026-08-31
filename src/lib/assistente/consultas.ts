@@ -2,6 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 import { buscarCaixaAberto, resumirCaixa, ultimosCaixasFechados } from "@/lib/caixa";
+import { montarListaDeCompra } from "@/lib/compras";
 import { formatarHora } from "@/lib/datas";
 import { formatarCentavos, formatarPercentual } from "@/lib/dinheiro";
 import { ROTULO_PAGAMENTO } from "@/lib/pagamentos";
@@ -313,12 +314,58 @@ const situacaoDoCaixa: Consulta = {
   },
 };
 
+const sugestaoDeCompra: Consulta = {
+  nome: "sugestao_de_compra",
+  descricao:
+    "O que pedir ao fornecedor e quanto, calculado pelo giro real das últimas 4 semanas. Diz também quando cada produto acaba e quanto a lista custa. Use quando perguntarem o que comprar, o que está acabando ou quanto vai gastar na reposição.",
+  parametros: z.object({
+    dias_de_cobertura: z
+      .number()
+      .int()
+      .min(3)
+      .max(60)
+      .optional()
+      .describe("Por quantos dias o estoque precisa durar. Padrão 14."),
+  }),
+  executar: async ({ dias_de_cobertura }) => {
+    const lista = await montarListaDeCompra(dias_de_cobertura ?? 14);
+    const dia = new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "2-digit",
+    });
+
+    return JSON.stringify({
+      cobertura_em_dias: lista.horizonteEmDias,
+      itens_na_lista: lista.paraComprar.length,
+      acabam_em_ate_7_dias: lista.urgentes,
+      custo_estimado: formatarCentavos(lista.custoTotalCentavos),
+      comprar: lista.paraComprar.slice(0, 20).map((l) => ({
+        produto: l.nome,
+        categoria: l.categoria,
+        em_estoque: l.estoqueAtual,
+        vende_por_semana: Number(l.porSemana.toFixed(1)),
+        acaba_em: l.acabaEm ? dia.format(l.acabaEm) : "não acaba no período",
+        pedir: l.sugestao,
+        embalagem:
+          l.multiploCompra > 1 ? `caixa de ${l.multiploCompra}` : "unidade",
+        custo: formatarCentavos(l.custoDaSugestaoCentavos),
+      })),
+      sem_projecao: lista.semSugestao
+        .filter((l) => l.ressalva)
+        .slice(0, 10)
+        .map((l) => ({ produto: l.nome, motivo: l.ressalva })),
+    });
+  },
+};
+
 export const CONSULTAS: Consulta[] = [
   resumoDeVendas,
   vendasPorDia,
   produtosMaisRentaveis,
   formasDePagamento,
   situacaoDoEstoque,
+  sugestaoDeCompra,
   detalhesDoProduto,
   situacaoDoCaixa,
 ];
@@ -330,6 +377,7 @@ export const ROTULO_FERRAMENTA: Record<string, string> = {
   produtos_mais_rentaveis: "Calculando a rentabilidade",
   formas_de_pagamento: "Separando as formas de pagamento",
   situacao_do_estoque: "Conferindo o estoque",
+  sugestao_de_compra: "Calculando a reposição",
   detalhes_do_produto: "Procurando o produto",
   situacao_do_caixa: "Olhando o caixa",
 };

@@ -77,6 +77,7 @@ export default async function PaginaProduto({
             estoqueMinimo: produto.estoqueMinimo,
             unidade: produto.unidade,
             codigoBarras: produto.codigoBarras,
+            multiploCompra: produto.multiploCompra,
           }}
         />
       </Painel>

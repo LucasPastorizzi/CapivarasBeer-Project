@@ -11,6 +11,7 @@ const ROTULO_FERRAMENTA: Record<string, string> = {
   produtos_mais_rentaveis: "Calculando a rentabilidade",
   formas_de_pagamento: "Separando as formas de pagamento",
   situacao_do_estoque: "Conferindo o estoque",
+  sugestao_de_compra: "Calculando a reposição",
   detalhes_do_produto: "Procurando o produto",
   situacao_do_caixa: "Olhando o caixa",
 };
@@ -18,7 +19,7 @@ const ROTULO_FERRAMENTA: Record<string, string> = {
 const SUGESTOES = [
   "Como foi o movimento este mês?",
   "Qual produto me dá mais lucro?",
-  "O que precisa repor?",
+  "O que preciso comprar essa semana?",
   "Qual dia da semana vende melhor?",
 ];
 

@@ -60,6 +60,11 @@ model Produto {
   estoqueMinimo Int    @default(0)
   unidade       String @default("UN")
 
+  /// Em quantas unidades o fornecedor vende. Cerveja em caixa de 12, gelo em
+  /// fardo de 10. A sugestão de compra arredonda para cima até o múltiplo:
+  /// pedir 47 latas quando a caixa tem 12 não é um pedido que exista.
+  multiploCompra Int @default(1)
+
   ativo        Boolean  @default(true)
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt

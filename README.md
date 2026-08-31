@@ -21,6 +21,7 @@ Um produto **[Flypi Enterprise](https://flypi.com.br)**.
 | Caixa | Abertura, fechamento, sangria e conferência |
 | Relatórios | Total diário, total mensal, produtos mais vendidos, margem de lucro |
 | Usuários | Perfis de dono (acesso total) e balconista (somente PDV) |
+| Compras | Lista de reposição calculada pelo giro real, com quanto pedir e quanto custa |
 | Assistente | Perguntas em português sobre a loja, respondidas a partir dos dados reais |
 
 Todos os módulos acima estão implementados.
