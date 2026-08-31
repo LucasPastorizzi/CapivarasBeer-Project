@@ -20,6 +20,8 @@ estoque, vendas (PDV), caixa e relatórios de faturamento.
 | Relatórios | Total diário, total mensal, produtos mais vendidos, margem de lucro |
 | Usuários | Perfis de dono (acesso total) e balconista (somente PDV) |
 
+Todos os módulos acima estão implementados.
+
 ## Rodando localmente
 
 ```bash
@@ -29,6 +31,13 @@ npm run dev
 
 A aplicação sobe em http://localhost:3000
 
+## Instalar como aplicativo
+
+O sistema é um PWA: no navegador, use "Instalar" (Chrome/Edge) ou
+"Adicionar à Tela de Início" (celular). Instalado, abre em janela própria, sem
+barra de endereço nem abas — o `Ctrl+W` deixa de ser risco no meio de uma
+venda.
+
 ## Scripts
 
 | Comando | O que faz |
@@ -37,3 +46,7 @@ A aplicação sobe em http://localhost:3000
 | `npm run build` | Build de produção |
 | `npm start` | Servidor de produção |
 | `npm run lint` | Verificação de lint |
+| `npm run db:migrate` | Aplica migrações do banco |
+| `npm run db:seed` | Cria o catálogo inicial e os usuários |
+| `npm run db:demo` | Gera três semanas de movimento fictício para explorar |
+| `npm run db:reset` | Recria o banco do zero e roda o seed |

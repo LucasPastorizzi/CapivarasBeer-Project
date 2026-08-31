@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   },
   description:
     "Sistema de gestão do Capivaras Beer: vendas, estoque, caixa e relatórios.",
+  applicationName: "Capivaras Beer",
+  icons: { icon: "/icone.svg", apple: "/icone.svg" },
+  // Instalado no celular, abre em tela cheia como aplicativo.
+  appleWebApp: { capable: true, title: "Capivaras", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
