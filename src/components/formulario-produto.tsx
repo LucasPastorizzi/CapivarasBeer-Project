@@ -11,6 +11,7 @@ import { Aviso, Botao, Campo, CampoDinheiro } from "@/components/ui";
 import {
   centavosParaInput,
   formatarCentavos,
+  formatarPercentual,
   inputParaCentavos,
   margemPercentual,
 } from "@/lib/dinheiro";
@@ -138,7 +139,7 @@ export function FormularioProduto({
               Lucro de{" "}
               <strong data-numerico>{formatarCentavos(lucroCentavos)}</strong>{" "}
               por unidade, margem de{" "}
-              <strong data-numerico>{margem.toFixed(1)}%</strong>.
+              <strong data-numerico>{formatarPercentual(margem)}</strong>.
             </>
           )}
         </div>

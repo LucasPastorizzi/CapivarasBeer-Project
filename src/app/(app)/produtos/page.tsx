@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { IconeAlerta } from "@/components/icones";
 import { exigirDono } from "@/lib/autenticacao";
-import { formatarCentavos, margemPercentual } from "@/lib/dinheiro";
+import {
+  formatarCentavos,
+  formatarPercentual,
+  margemPercentual,
+} from "@/lib/dinheiro";
 import { listarCategorias, listarProdutos } from "@/lib/produtos";
 
 export const metadata = { title: "Produtos" };
@@ -215,7 +219,7 @@ export default async function PaginaProdutos({
                         (margem < 0 ? "text-perigo" : "text-ink-medio")
                       }
                     >
-                      {margem.toFixed(0)}%
+                      {formatarPercentual(margem, 0)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {emFalta ? (

@@ -44,3 +44,16 @@ export function margemPercentual(
   if (vendaCentavos <= 0) return 0;
   return ((vendaCentavos - custoCentavos) / vendaCentavos) * 100;
 }
+
+/**
+ * Percentual no formato brasileiro: 40,9% e não 40.9%.
+ *
+ * `toFixed` sempre devolve ponto decimal. Numa tela em português isso lê como
+ * erro de digitação — ou pior, como milhar.
+ */
+export function formatarPercentual(valor: number, casas = 1): string {
+  return `${valor.toLocaleString("pt-BR", {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  })}%`;
+}

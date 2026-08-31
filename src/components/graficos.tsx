@@ -34,11 +34,16 @@ export function GraficoDiario({ serie }: { serie: PontoDiario[] }) {
   const maximo = Math.max(...serie.map((p) => p.totalCentavos), 1);
   const temDados = serie.some((p) => p.totalCentavos > 0);
 
+  // Com muitos dias os rótulos se encavalam e nenhum fica legível. Acima de
+  // 16 colunas mostramos um a cada três, mantendo sempre o primeiro e o
+  // último para o leitor saber onde a série começa e termina.
+  const passoDoRotulo = serie.length > 16 ? 3 : 1;
+
   if (!temDados) {
     return (
       <p className="py-6 text-sm text-ink-medio">
-        Nenhuma venda nos últimos 14 dias. O gráfico aparece assim que o
-        primeiro turno for registrado.
+        Nenhuma venda no período. O gráfico aparece assim que o primeiro turno
+        for registrado.
       </p>
     );
   }
@@ -52,8 +57,12 @@ export function GraficoDiario({ serie }: { serie: PontoDiario[] }) {
         aria-labelledby={idTitulo}
         className="flex h-40 items-end gap-1.5"
       >
+        {/* A descrição é montada a partir da série, não escrita à mão: o
+            mesmo gráfico serve 14 dias no painel e 31 nos relatórios, e um
+            rótulo fixo faria o leitor de tela anunciar um período errado. */}
         <span id={idTitulo} className="sr-only">
-          Faturamento diário dos últimos 14 dias, de{" "}
+          Faturamento de {serie.length}{" "}
+          {serie.length === 1 ? "dia" : "dias"}, de{" "}
           {dataCompleta.format(serie[0].data)} a{" "}
           {dataCompleta.format(serie[serie.length - 1].data)}.
         </span>
@@ -90,11 +99,15 @@ export function GraficoDiario({ serie }: { serie: PontoDiario[] }) {
       </div>
 
       <div className="mt-2 flex gap-1.5 text-center text-xs text-ink-fraco">
-        {serie.map((ponto) => (
-          <span key={ponto.data.toISOString()} className="flex-1">
-            {diaCurto.format(ponto.data)}
-          </span>
-        ))}
+        {serie.map((ponto, i) => {
+          const mostrar =
+            i % passoDoRotulo === 0 || i === serie.length - 1;
+          return (
+            <span key={ponto.data.toISOString()} className="min-w-0 flex-1">
+              {mostrar ? diaCurto.format(ponto.data) : ""}
+            </span>
+          );
+        })}
       </div>
 
       {ativo !== null && (
