@@ -202,11 +202,43 @@ npm run producao
 `npm install`, e um processo que já estava rodando continua com o cliente
 antigo — campos novos chegam vazios e cálculos silenciosamente erram.
 
-## 7. Sobre a Vercel
+## 7. A vitrine na Vercel
 
-O endereço na Vercel **não guarda dados**. Lá o disco é somente-leitura e
-efêmero: o banco não existe, ninguém consegue entrar, e se conseguisse, cada
-venda sumiria no próximo deploy.
+A Vercel serve para **mostrar** o sistema — não para operar a loja. Lá não
+existe disco permanente: o que existe é `/tmp`, gravável mas apagado quando a
+instância recicla.
 
-Ele serve como vitrine para mostrar o sistema. A loja de verdade roda aqui, no
-balcão.
+O modo de demonstração usa exatamente isso. No arranque do servidor o banco
+nasce em `/tmp`, as migrações são aplicadas e um catálogo fictício com três
+semanas de movimento é gerado. Quem visita navega no sistema inteiro, inclusive
+registrando venda — e some quando a instância recicla, o que está certo, porque
+nada ali é real.
+
+Uma faixa amarela no topo diz isso em toda tela, para ninguém confundir a
+vitrine com a loja.
+
+### Configurar na Vercel
+
+Em **Settings → Environment Variables**, adicione:
+
+| Variável | Valor |
+|---|---|
+| `MODO_DEMONSTRACAO` | `true` |
+| `DATABASE_URL` | `file:/tmp/capivaras.db` |
+| `SESSION_SECRET` | o resultado de `openssl rand -base64 32` |
+
+Depois **Redeploy**. Os acessos são os mesmos do seed.
+
+> Não defina `MODO_DEMONSTRACAO` na máquina da loja. Lá o banco é permanente e
+> este modo nunca deve tocar nele — por isso ele só age quando a variável está
+> explicitamente ligada, e só cria o banco quando o arquivo ainda não existe.
+
+### Por que não PostgreSQL
+
+Seria a resposta óbvia, e traria um custo escondido: o Prisma amarra um
+provedor por schema. Ter Postgres na vitrine e SQLite na loja significaria
+duas histórias de migração para manter em sincronia — e a que ninguém usa no
+dia a dia é a que diverge primeiro, silenciosamente, até o dia em que a loja
+precisa de uma migração que só foi testada na vitrine.
+
+Um schema, uma história de migrações, dois destinos.
