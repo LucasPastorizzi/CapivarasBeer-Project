@@ -1,7 +1,7 @@
 import "server-only";
 
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 const NOME_COOKIE = "capivaras_sessao";
 
@@ -15,6 +15,28 @@ export type Sessao = {
   nome: string;
   papel: Papel;
 };
+
+/**
+ * Se a conexão é HTTPS de verdade.
+ *
+ * Marcar o cookie como `secure` numa conexão HTTP faz o navegador descartá-lo
+ * sem avisar: o login dá certo, redireciona, e a próxima requisição chega sem
+ * sessão — um vaivém eterno para a tela de entrada. Amarrar isso a
+ * NODE_ENV era errado, porque "produção" não implica HTTPS.
+ *
+ * COOKIE_SECURE força o valor quando o proxy da hospedagem não repassa o
+ * cabeçalho de protocolo.
+ */
+async function conexaoSegura(): Promise<boolean> {
+  const forcado = process.env.COOKIE_SECURE?.trim().toLowerCase();
+  if (forcado === "true") return true;
+  if (forcado === "false") return false;
+
+  const protocolo = (await headers()).get("x-forwarded-proto");
+  if (protocolo) return protocolo.split(",")[0].trim() === "https";
+
+  return process.env.NODE_ENV === "production";
+}
 
 function chave() {
   const segredo = process.env.SESSION_SECRET;
@@ -42,7 +64,7 @@ export async function criarSessao(sessao: Sessao): Promise<void> {
   const armazem = await cookies();
   armazem.set(NOME_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: await conexaoSegura(),
     sameSite: "lax",
     path: "/",
     expires: expiraEm,
@@ -81,3 +103,8 @@ export async function encerrarSessao(): Promise<void> {
 }
 
 export const NOME_COOKIE_SESSAO = NOME_COOKIE;
+
+/** Se o segredo de assinatura está configurado. Usado para diagnóstico. */
+export function segredoConfigurado(): boolean {
+  return Boolean(process.env.SESSION_SECRET);
+}
