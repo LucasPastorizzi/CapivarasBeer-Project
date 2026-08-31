@@ -26,6 +26,13 @@ Um produto **[Flypi Enterprise](https://flypi.com.br)**.
 
 Todos os módulos acima estão implementados.
 
+## Instalação na loja
+
+O sistema roda na máquina do balcão, com o banco em arquivo local — a loja
+vende mesmo sem internet. O passo a passo completo, incluindo início
+automático e backup diário verificado, está em
+**[INSTALACAO.md](INSTALACAO.md)**.
+
 ## Rodando localmente
 
 ```bash

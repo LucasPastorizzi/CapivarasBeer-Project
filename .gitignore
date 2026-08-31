@@ -49,3 +49,6 @@ prisma/*.db-journal
 
 # o exemplo de configuração deve ser versionado
 !.env.example
+
+# cópias de segurança do banco
+/backups
