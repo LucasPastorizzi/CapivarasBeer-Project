@@ -39,14 +39,29 @@ reais: "como foi o movimento este mês", "qual produto me dá mais lucro", "o
 que precisa repor". Ele **só lê** — não registra venda, não muda preço, não
 mexe no estoque.
 
-Para ligá-lo, coloque uma chave da API da Anthropic no `.env`:
+### Qual IA responde
+
+O assistente aceita dois provedores. As sete consultas ao banco, as instruções
+e a tela de conversa são as mesmas nos dois — só troca quem redige a resposta.
 
 ```
+# OpenAI (padrão)
+ASSISTENTE_IA="openai"
+OPENAI_API_KEY="sk-..."
+OPENAI_MODEL="gpt-4o"    # opcional
+
+# ou Claude
+ASSISTENTE_IA="claude"
 ANTHROPIC_API_KEY="sk-ant-..."
 ```
 
-Sem a chave, a aba avisa que não foi configurada e o resto do sistema segue
-funcionando normalmente. Cada pergunta consome créditos da sua conta.
+Sem `ASSISTENTE_IA`, vale a chave que estiver preenchida. Sem chave nenhuma, a
+aba avisa o que falta e o resto do sistema segue funcionando normalmente. Cada
+pergunta consome créditos da conta do provedor escolhido.
+
+Para acrescentar um terceiro provedor, basta escrever um arquivo em
+`src/lib/assistente/` que atenda ao contrato de `provedor.ts` — nada nas
+consultas ao banco precisa mudar.
 
 ## Instalar como aplicativo
 

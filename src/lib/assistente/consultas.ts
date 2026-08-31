@@ -1,6 +1,5 @@
 import "server-only";
 
-import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 import { buscarCaixaAberto, resumirCaixa, ultimosCaixasFechados } from "@/lib/caixa";
 import { formatarHora } from "@/lib/datas";
@@ -17,7 +16,21 @@ import {
 import { normalizar } from "@/lib/texto";
 
 /**
- * Ferramentas que o assistente pode chamar.
+ * Uma consulta que o assistente pode fazer.
+ *
+ * A definição é neutra de propósito: nome, descrição, formato dos parâmetros e
+ * a função que executa. Cada provedor de IA traduz isto para o formato dele,
+ * e trocar de provedor não encosta em nenhuma linha de consulta ao banco.
+ */
+export type Consulta = {
+  nome: string;
+  descricao: string;
+  parametros: z.ZodObject<z.ZodRawShape>;
+  executar: (entrada: never) => Promise<string>;
+};
+
+/**
+ * As consultas disponíveis.
  *
  * Todas são somente leitura, por decisão e não por acaso: um assistente que
  * pode alterar estoque ou cancelar venda transforma uma frase ambígua em
@@ -37,12 +50,12 @@ function descreverIntervalo(p: Periodo): string {
   return `${dataBR.format(de)} a ${dataBR.format(new Date(ate.getTime() - 1))}`;
 }
 
-const resumoDeVendas = betaZodTool({
-  name: "resumo_de_vendas",
-  description:
+const resumoDeVendas: Consulta = {
+  nome: "resumo_de_vendas",
+  descricao:
     "Faturamento, custo da mercadoria, lucro bruto, margem, número de vendas e ticket médio num período, com comparação contra o período anterior de mesma duração.",
-  inputSchema: z.object({ periodo }),
-  run: async ({ periodo: p }) => {
+  parametros: z.object({ periodo }),
+  executar: async ({ periodo: p }) => {
     const { resumo, resumoAnterior } = await carregarRelatorio(p);
 
     return JSON.stringify({
@@ -62,14 +75,14 @@ const resumoDeVendas = betaZodTool({
       },
     });
   },
-});
+};
 
-const vendasPorDia = betaZodTool({
-  name: "vendas_por_dia",
-  description:
+const vendasPorDia: Consulta = {
+  nome: "vendas_por_dia",
+  descricao:
     "Faturamento dia a dia dentro do período. Útil para responder qual dia vendeu mais, como foi o fim de semana ou se há tendência.",
-  inputSchema: z.object({ periodo }),
-  run: async ({ periodo: p }) => {
+  parametros: z.object({ periodo }),
+  executar: async ({ periodo: p }) => {
     const { serie } = await carregarRelatorio(p);
     const semana = new Intl.DateTimeFormat("pt-BR", { weekday: "long" });
 
@@ -82,13 +95,13 @@ const vendasPorDia = betaZodTool({
       })),
     });
   },
-});
+};
 
-const produtosMaisRentaveis = betaZodTool({
-  name: "produtos_mais_rentaveis",
-  description:
+const produtosMaisRentaveis: Consulta = {
+  nome: "produtos_mais_rentaveis",
+  descricao:
     "Ranking de produtos por lucro no período, com unidades vendidas, faturamento, custo e margem de cada um. Ordenado por lucro, não por faturamento.",
-  inputSchema: z.object({
+  parametros: z.object({
     periodo,
     limite: z
       .number()
@@ -98,7 +111,7 @@ const produtosMaisRentaveis = betaZodTool({
       .optional()
       .describe("Quantos produtos trazer. Padrão 10."),
   }),
-  run: async ({ periodo: p, limite }) => {
+  executar: async ({ periodo: p, limite }) => {
     const linhas = await rentabilidadePorProduto(
       resolverIntervalo(p),
       limite ?? 10,
@@ -117,14 +130,14 @@ const produtosMaisRentaveis = betaZodTool({
       })),
     });
   },
-});
+};
 
-const formasDePagamento = betaZodTool({
-  name: "formas_de_pagamento",
-  description:
+const formasDePagamento: Consulta = {
+  nome: "formas_de_pagamento",
+  descricao:
     "Quanto entrou por dinheiro, Pix, débito e crédito no período, com número de vendas de cada forma.",
-  inputSchema: z.object({ periodo }),
-  run: async ({ periodo: p }) => {
+  parametros: z.object({ periodo }),
+  executar: async ({ periodo: p }) => {
     const { mix, resumo } = await carregarRelatorio(p);
 
     return JSON.stringify({
@@ -144,19 +157,19 @@ const formasDePagamento = betaZodTool({
       })),
     });
   },
-});
+};
 
-const situacaoDoEstoque = betaZodTool({
-  name: "situacao_do_estoque",
-  description:
+const situacaoDoEstoque: Consulta = {
+  nome: "situacao_do_estoque",
+  descricao:
     "Estoque atual dos produtos. Use filtro 'abaixo_do_minimo' para saber o que precisa repor, ou 'todos' para o panorama completo.",
-  inputSchema: z.object({
+  parametros: z.object({
     filtro: z
       .enum(["abaixo_do_minimo", "todos"])
       .describe("abaixo_do_minimo traz só o que precisa de reposição."),
     limite: z.number().int().min(1).max(60).optional(),
   }),
-  run: async ({ filtro, limite }) => {
+  executar: async ({ filtro, limite }) => {
     const produtos = await prisma.produto.findMany({
       where: {
         ativo: true,
@@ -188,16 +201,16 @@ const situacaoDoEstoque = betaZodTool({
       })),
     });
   },
-});
+};
 
-const detalhesDoProduto = betaZodTool({
-  name: "detalhes_do_produto",
-  description:
+const detalhesDoProduto: Consulta = {
+  nome: "detalhes_do_produto",
+  descricao:
     "Tudo sobre um produto pelo nome (busca parcial, sem exigir acento): preço, custo, margem, estoque e últimos movimentos.",
-  inputSchema: z.object({
+  parametros: z.object({
     termo: z.string().min(2).describe("Parte do nome do produto. Ex: 'heineken'"),
   }),
-  run: async ({ termo }) => {
+  executar: async ({ termo }) => {
     // A busca do banco é sensível a acento; filtramos em memória com a mesma
     // normalização das telas, para o assistente encontrar o que o dono acha.
     const todos = await prisma.produto.findMany({
@@ -256,14 +269,14 @@ const detalhesDoProduto = betaZodTool({
       })),
     });
   },
-});
+};
 
-const situacaoDoCaixa = betaZodTool({
-  name: "situacao_do_caixa",
-  description:
+const situacaoDoCaixa: Consulta = {
+  nome: "situacao_do_caixa",
+  descricao:
     "Se há caixa aberto agora, quanto se espera na gaveta, e como fecharam os últimos turnos (incluindo sobras e faltas).",
-  inputSchema: z.object({}),
-  run: async () => {
+  parametros: z.object({}),
+  executar: async () => {
     const aberto = await buscarCaixaAberto();
     const resumo = aberto ? await resumirCaixa(aberto.id) : null;
     const historico = await ultimosCaixasFechados(5);
@@ -298,9 +311,9 @@ const situacaoDoCaixa = betaZodTool({
       })),
     });
   },
-});
+};
 
-export const FERRAMENTAS = [
+export const CONSULTAS: Consulta[] = [
   resumoDeVendas,
   vendasPorDia,
   produtosMaisRentaveis,
