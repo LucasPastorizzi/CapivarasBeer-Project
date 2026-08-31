@@ -27,5 +27,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg).*)"],
+  // O manifesto e os ícones precisam responder sem sessão: o navegador os
+  // busca antes de qualquer login para oferecer a instalação do aplicativo,
+  // e um redirecionamento devolve HTML onde ele espera JSON.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.svg|.*\\.png|.*\\.ico).*)",
+  ],
 };
