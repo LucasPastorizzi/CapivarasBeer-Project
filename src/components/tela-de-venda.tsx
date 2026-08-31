@@ -5,7 +5,7 @@ import {
   registrarVenda,
   type ResultadoVenda,
 } from "@/app/(app)/pdv/acoes";
-import { Aviso, Botao, CampoDinheiro, Linha } from "@/components/ui";
+import { Aviso, Botao, CampoDinheiro, Linha, Tecla } from "@/components/ui";
 import {
   FORMAS_PAGAMENTO,
   ROTULO_PAGAMENTO,
@@ -198,11 +198,25 @@ export function TelaDeVenda({ produtos }: { produtos: ProdutoParaVenda[] }) {
             aria-expanded={resultados.length > 0}
             aria-controls="resultados-busca"
           />
-          <p className="mt-1.5 text-xs text-ink-fraco">
-            <kbd className="font-mono">↑</kbd> <kbd className="font-mono">↓</kbd>{" "}
-            escolhe · <kbd className="font-mono">Enter</kbd> adiciona ·{" "}
-            <kbd className="font-mono">Ctrl+Enter</kbd> finaliza ·{" "}
-            <kbd className="font-mono">Esc</kbd> limpa
+          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ink-fraco">
+            <span className="flex items-center gap-1.5">
+              <Tecla>↑</Tecla>
+              <Tecla>↓</Tecla>
+              escolhe
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Tecla>Enter</Tecla>
+              adiciona
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Tecla>Ctrl</Tecla>
+              <Tecla>Enter</Tecla>
+              finaliza
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Tecla>Esc</Tecla>
+              limpa
+            </span>
           </p>
         </div>
 

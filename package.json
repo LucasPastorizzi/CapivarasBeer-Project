@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "db:demo": "tsx prisma/demo.ts"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.0",

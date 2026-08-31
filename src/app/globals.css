@@ -4,19 +4,21 @@
    escolha. Neutros levemente quentes (matiz 75, o mesmo da madeira do logo),
    acento dourado da marca, anel de foco no azul do neon da fachada. */
 @theme {
-  /* Superfícies, da mais funda para a mais elevada. */
-  --color-sidebar: oklch(0.135 0.007 75);
-  --color-bg: oklch(0.155 0.008 75);
-  --color-surface: oklch(0.205 0.01 75);
-  --color-surface-alto: oklch(0.255 0.012 75);
+  /* Superfícies, da mais funda para a mais elevada. A distância entre a barra
+     lateral e o conteúdo foi aberta de 0.02 para 0.06 de luminosidade: na
+     versão anterior as duas se liam como um plano só. */
+  --color-sidebar: oklch(0.125 0.007 75);
+  --color-bg: oklch(0.185 0.009 75);
+  --color-surface: oklch(0.225 0.011 75);
+  --color-surface-alto: oklch(0.275 0.013 75);
 
-  --color-borda: oklch(0.3 0.012 75);
-  --color-borda-forte: oklch(0.38 0.014 75);
+  --color-borda: oklch(0.32 0.012 75);
+  --color-borda-forte: oklch(0.4 0.014 75);
 
   /* Texto. Nenhum destes fica abaixo de 4.5:1 em nenhuma superfície acima. */
   --color-ink: oklch(0.965 0.004 85);
   --color-ink-medio: oklch(0.76 0.012 85);
-  --color-ink-fraco: oklch(0.64 0.014 85);
+  --color-ink-fraco: oklch(0.655 0.014 85);
 
   /* Acento da marca: ação primária e seleção, nunca decoração. */
   --color-ouro: oklch(0.8 0.13 82);
@@ -48,6 +50,17 @@
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Paleta categórica dos gráficos, em ordem fixa — nunca ciclada.
+     Validada por script contra a superfície escura: banda de luminosidade,
+     piso de croma, separação sob protanopia e deuteranopia, e contraste.
+     Fica inteira no lado frio porque o quente está reservado à marca (ouro)
+     e aos estados (alerta, perigo, ok) — série nenhuma pode ser confundida
+     com "estoque baixo". */
+  --color-serie-1: #2f8adc;
+  --color-serie-2: #c1297e;
+  --color-serie-3: #00a8a9;
+  --color-serie-4: #8254c4;
 
   --ease-saida: cubic-bezier(0.22, 1, 0.36, 1);
 }

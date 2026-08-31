@@ -129,23 +129,29 @@ export default async function PaginaProdutos({
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-painel border border-borda bg-surface">
-          <table className="w-full min-w-[46rem] text-sm">
-            <thead>
+        <div className="rounded-painel border border-borda bg-surface">
+          {/* Em telas estreitas as colunas secundárias se escondem em vez de
+              empurrar a tabela para uma rolagem lateral que ninguém descobre.
+              Produto, venda e estoque nunca somem: são o que responde "quanto
+              custa" e "ainda tem". */}
+          <table className="w-full text-sm">
+            {/* Cabeçalho fixo: com 27 linhas, rolar faz perder a referência
+                de qual coluna é custo e qual é venda. */}
+            <thead className="sticky top-0 bg-surface">
               <tr className="border-b border-borda text-left text-xs text-ink-fraco">
                 <th scope="col" className="px-4 py-3 font-medium">
                   Produto
                 </th>
-                <th scope="col" className="px-4 py-3 font-medium">
+                <th scope="col" className="hidden px-4 py-3 font-medium sm:table-cell">
                   Categoria
                 </th>
-                <th scope="col" className="px-4 py-3 text-right font-medium">
+                <th scope="col" className="hidden px-4 py-3 text-right font-medium lg:table-cell">
                   Custo
                 </th>
                 <th scope="col" className="px-4 py-3 text-right font-medium">
                   Venda
                 </th>
-                <th scope="col" className="px-4 py-3 text-right font-medium">
+                <th scope="col" className="hidden px-4 py-3 text-right font-medium lg:table-cell">
                   Margem
                 </th>
                 <th scope="col" className="px-4 py-3 text-right font-medium">
@@ -184,10 +190,20 @@ export default async function PaginaProdutos({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-ink-medio">
-                      {p.categoria.nome}
+                    <td className="hidden px-4 py-3 text-ink-medio sm:table-cell">
+                      {/* A cor da categoria acompanha o nome, nunca o
+                          substitui: é atalho visual para quem varre a lista,
+                          não o único jeito de saber a categoria. */}
+                      <span className="flex items-center gap-2">
+                        <span
+                          aria-hidden
+                          className="size-2 shrink-0 rounded-full"
+                          style={{ backgroundColor: p.categoria.cor }}
+                        />
+                        {p.categoria.nome}
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-ink-medio">
+                    <td className="hidden px-4 py-3 text-right text-ink-medio lg:table-cell">
                       {formatarCentavos(p.precoCustoCentavos)}
                     </td>
                     <td className="px-4 py-3 text-right font-medium">
@@ -195,7 +211,7 @@ export default async function PaginaProdutos({
                     </td>
                     <td
                       className={
-                        "px-4 py-3 text-right " +
+                        "hidden px-4 py-3 text-right lg:table-cell " +
                         (margem < 0 ? "text-perigo" : "text-ink-medio")
                       }
                     >

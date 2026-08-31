@@ -1,25 +1,21 @@
 import Link from "next/link";
 import { sair } from "@/app/login/acoes";
+import { SeloCapivara } from "@/components/marca";
 import { NavegacaoInferior, NavegacaoLateral } from "@/components/navegacao";
 import { exigirSessao } from "@/lib/autenticacao";
+import { rotaInicial } from "@/lib/autenticacao";
 
-/** Marca reduzida ao essencial: a inicial da capivara e o nome. */
-function Marca() {
+function Marca({ href }: { href: string }) {
   return (
     <Link
-      href="/"
+      href={href}
       className="flex items-center gap-2.5 rounded-campo px-3 py-4 transition-colors duration-150 hover:text-ouro"
     >
-      <span
-        aria-hidden
-        className="grid size-8 shrink-0 place-items-center rounded-campo bg-ouro font-semibold text-bg"
-      >
-        C
-      </span>
+      <SeloCapivara className="size-9" />
       <span className="text-sm leading-tight font-semibold">
         Capivaras Beer
         <span className="block text-xs font-normal text-ink-fraco">
-          Gestão da loja
+          Lindolfo Collor
         </span>
       </span>
     </Link>
@@ -27,16 +23,33 @@ function Marca() {
 }
 
 function Rodape({ nome, papel }: { nome: string; papel: string }) {
+  const iniciais = nome
+    .split(" ")
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="mt-auto border-t border-borda p-3">
-      <p className="px-3 text-sm font-medium">{nome}</p>
-      <p className="px-3 text-xs text-ink-fraco">
-        {papel === "DONO" ? "Dono" : "Balconista"}
-      </p>
+      <div className="flex items-center gap-2.5 px-1 py-1">
+        <span
+          aria-hidden
+          className="grid size-8 shrink-0 place-items-center rounded-full bg-surface-alto text-xs font-medium text-ink-medio"
+        >
+          {iniciais}
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{nome}</p>
+          <p className="text-xs text-ink-fraco">
+            {papel === "DONO" ? "Dono" : "Balconista"}
+          </p>
+        </div>
+      </div>
       <form action={sair}>
         <button
           type="submit"
-          className="mt-2 w-full rounded-campo px-3 py-2 text-left text-sm text-ink-medio transition-colors duration-150 hover:bg-surface hover:text-ink"
+          className="mt-1 w-full rounded-campo px-3 py-2 text-left text-sm text-ink-medio transition-colors duration-150 hover:bg-surface hover:text-ink"
         >
           Sair
         </button>
@@ -53,14 +66,21 @@ export default async function LayoutDoApp({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-dvh">
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-borda bg-sidebar md:flex">
-        <Marca />
+        <Marca href={rotaInicial(sessao.papel)} />
         <NavegacaoLateral papel={sessao.papel} />
         <Rodape nome={sessao.nome} papel={sessao.papel} />
       </aside>
 
-      {/* pb-20 no celular abre espaço para a barra inferior não cobrir conteúdo. */}
-      <main className="min-w-0 flex-1 px-4 pt-6 pb-20 md:px-8 md:pb-10">
-        <div className="mx-auto max-w-5xl">{children}</div>
+      {/* Cabeçalho só no celular, onde não há barra lateral para se localizar. */}
+      <header className="fixed inset-x-0 top-0 z-[var(--z-fixo)] flex items-center gap-2.5 border-b border-borda bg-sidebar px-4 py-2.5 md:hidden">
+        <SeloCapivara className="size-7" />
+        <span className="text-sm font-semibold">Capivaras Beer</span>
+      </header>
+
+      {/* Os espaçamentos no celular abrem lugar para o cabeçalho fixo em cima
+          e a barra de navegação embaixo. */}
+      <main className="min-w-0 flex-1 px-4 pt-16 pb-24 md:px-8 md:pt-8 md:pb-12">
+        <div className="mx-auto max-w-[80rem]">{children}</div>
       </main>
 
       <NavegacaoInferior papel={sessao.papel} />

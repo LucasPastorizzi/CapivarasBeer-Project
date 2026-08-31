@@ -270,3 +270,81 @@ export function Linha({
     </div>
   );
 }
+
+/** Tecla física, para as dicas de atalho do balcão. */
+export function Tecla({ children }: { children: ReactNode }) {
+  return (
+    <kbd className="rounded-[4px] border border-borda bg-surface-alto px-1.5 py-0.5 font-mono text-[0.6875rem] text-ink-medio">
+      {children}
+    </kbd>
+  );
+}
+
+/**
+ * Esqueleto de carregamento. Ocupa a forma do conteúdo que vem, para a página
+ * não pular quando ele chega — girador no meio do conteúdo faz o operador
+ * esperar sem saber o que esperar.
+ */
+export function Esqueleto({ className = "" }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={`animate-pulse rounded-campo bg-surface-alto ${className}`}
+    />
+  );
+}
+
+/** Estado vazio: diz o que aconteceu e qual é o próximo passo. */
+export function Vazio({
+  titulo,
+  descricao,
+  acao,
+}: {
+  titulo: string;
+  descricao: string;
+  acao?: ReactNode;
+}) {
+  return (
+    <div className="px-5 py-10 text-center">
+      <p className="text-sm font-medium text-ink">{titulo}</p>
+      <p className="mx-auto mt-1 max-w-sm text-sm text-ink-medio">
+        {descricao}
+      </p>
+      {acao && <div className="mt-4 flex justify-center">{acao}</div>}
+    </div>
+  );
+}
+
+/** Variação de um número contra um período de referência. */
+export function Variacao({
+  atualCentavos,
+  referenciaCentavos,
+  rotuloReferencia,
+}: {
+  atualCentavos: number;
+  referenciaCentavos: number;
+  rotuloReferencia: string;
+}) {
+  // Sem base de comparação não existe variação: mostrar "+100%" contra zero é
+  // um número que não quer dizer nada.
+  if (referenciaCentavos === 0) {
+    return (
+      <span className="text-xs text-ink-fraco">
+        Sem {rotuloReferencia} para comparar
+      </span>
+    );
+  }
+
+  const variacao =
+    ((atualCentavos - referenciaCentavos) / referenciaCentavos) * 100;
+  const subiu = variacao >= 0;
+
+  return (
+    <span
+      className={`text-xs ${subiu ? "text-ok" : "text-perigo"}`}
+      data-numerico
+    >
+      {subiu ? "▲" : "▼"} {Math.abs(variacao).toFixed(0)}% vs {rotuloReferencia}
+    </span>
+  );
+}
