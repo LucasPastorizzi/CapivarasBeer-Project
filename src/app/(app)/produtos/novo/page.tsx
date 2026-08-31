@@ -12,7 +12,7 @@ export default async function PaginaNovoProduto() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Novo produto</h1>
+        <h1 className="font-display text-[2.125rem] leading-none font-normal">Novo produto</h1>
       </header>
       <Painel>
         <FormularioProduto categorias={categorias} />

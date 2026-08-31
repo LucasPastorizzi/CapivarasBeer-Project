@@ -2,28 +2,28 @@
 
 /* Sistema visual do Capivaras Beer — ver DESIGN.md para as razões de cada
    escolha. Neutros levemente quentes (matiz 75, o mesmo da madeira do logo),
-   acento dourado da marca, anel de foco no azul do neon da fachada. */
+   acento amarelo da Flypi, anel de foco em azul. */
 @theme {
-  /* Superfícies, da mais funda para a mais elevada. A distância entre a barra
-     lateral e o conteúdo foi aberta de 0.02 para 0.06 de luminosidade: na
-     versão anterior as duas se liam como um plano só. */
-  --color-sidebar: oklch(0.125 0.007 75);
-  --color-bg: oklch(0.185 0.009 75);
-  --color-surface: oklch(0.225 0.011 75);
-  --color-surface-alto: oklch(0.275 0.013 75);
+  /* Superfícies. Neutros sem tinta, do preto puro da Flypi para cima — a cor
+     entra só onde carrega significado. */
+  --color-sidebar: #000000;
+  --color-bg: #0d0d0e;
+  --color-surface: #18181b;
+  --color-surface-alto: #27272a;
 
-  --color-borda: oklch(0.32 0.012 75);
-  --color-borda-forte: oklch(0.4 0.014 75);
+  --color-borda: #2e2e2e;
+  --color-borda-forte: #3f3f46;
 
   /* Texto. Nenhum destes fica abaixo de 4.5:1 em nenhuma superfície acima. */
-  --color-ink: oklch(0.965 0.004 85);
-  --color-ink-medio: oklch(0.76 0.012 85);
-  --color-ink-fraco: oklch(0.655 0.014 85);
+  --color-ink: #ffffff;
+  --color-ink-medio: #a3a3a3;
+  --color-ink-fraco: #919195;
 
-  /* Acento da marca: ação primária e seleção, nunca decoração. */
-  --color-ouro: oklch(0.8 0.13 82);
-  --color-ouro-forte: oklch(0.72 0.145 78);
-  /* O azul do neon da fachada, reservado ao anel de foco e a links. */
+  /* Amarelo da Flypi: ação primária e seleção, nunca decoração. */
+  --color-marca: #fde047;
+  --color-marca-forte: #f5d020;
+  /* Anel de foco e links. Azul separa "onde estou navegando" de "qual o
+     estado do dado" — é onde interface de PDV confunde o operador. */
   --color-neon: oklch(0.72 0.15 240);
 
   --color-ok: oklch(0.76 0.15 152);
@@ -35,7 +35,7 @@
   --color-ok-fundo: oklch(0.76 0.15 152 / 0.14);
   --color-alerta-fundo: oklch(0.78 0.16 55 / 0.14);
   --color-perigo-fundo: oklch(0.68 0.19 25 / 0.14);
-  --color-ouro-fundo: oklch(0.8 0.13 82 / 0.14);
+  --color-marca-fundo: rgb(253 224 71 / 0.14);
 
   /* Escala fixa em rem, razão ~1.2. Produto não usa tipografia fluida. */
   --text-xs: 0.75rem;
@@ -45,16 +45,22 @@
   --text-xl: 1.5rem;
   --text-2xl: 1.875rem;
 
+  /* Ação é pílula, campo é reto. A regra vem da Flypi e vale sem exceção:
+     onde se clica tem cantos redondos por inteiro, onde se digita não. */
   --radius-campo: 0.5rem;
-  --radius-painel: 0.75rem;
+  --radius-painel: 0.875rem;
+  --radius-acao: 9999px;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Serifada só em títulos de página e no logotipo. Nunca em dado, rótulo ou
+     número: coluna de valor precisa de dígito de largura fixa. */
+  --font-display: var(--font-instrument-serif), Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Paleta categórica dos gráficos, em ordem fixa — nunca ciclada.
      Validada por script contra a superfície escura: banda de luminosidade,
      piso de croma, separação sob protanopia e deuteranopia, e contraste.
-     Fica inteira no lado frio porque o quente está reservado à marca (ouro)
+     Fica inteira no lado frio porque o quente está reservado à marca (amarelo)
      e aos estados (alerta, perigo, ok) — série nenhuma pode ser confundida
      com "estoque baixo". */
   --color-serie-1: #2f8adc;

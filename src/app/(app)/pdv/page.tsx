@@ -20,7 +20,7 @@ export default async function PaginaPdv() {
     return (
       <div className="space-y-6">
         <header>
-          <h1 className="text-xl font-semibold tracking-tight">Vender</h1>
+          <h1 className="font-display text-[2.125rem] leading-none font-normal">Vender</h1>
         </header>
         <Painel titulo="Caixa fechado">
           <p className="max-w-prose text-sm text-ink-medio">
@@ -30,7 +30,7 @@ export default async function PaginaPdv() {
           </p>
           <Link
             href="/caixa"
-            className="mt-4 inline-flex rounded-campo bg-ouro px-4 py-2 text-sm font-medium text-bg transition-colors duration-150 hover:bg-ouro-forte"
+            className="mt-4 inline-flex rounded-acao bg-marca px-5 py-2 text-sm font-medium text-sidebar transition-colors duration-150 hover:bg-marca-forte"
           >
             Abrir o caixa
           </Link>
@@ -44,7 +44,7 @@ export default async function PaginaPdv() {
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="text-xl font-semibold tracking-tight">Vender</h1>
+        <h1 className="font-display text-[2.125rem] leading-none font-normal">Vender</h1>
         <p className="text-sm text-ink-medio">
           Caixa aberto às {formatarHora(caixa.abertoEm)}
         </p>

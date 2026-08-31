@@ -63,9 +63,9 @@ export function FormularioEstoque({
               aria-checked={tipo === t}
               onClick={() => setTipo(t)}
               className={
-                "rounded-campo border px-3 py-2 text-sm transition-colors duration-150 " +
+                "rounded-acao border px-3 py-2 text-sm transition-colors duration-150 " +
                 (tipo === t
-                  ? "border-ouro bg-ouro-fundo font-medium text-ouro"
+                  ? "border-marca bg-marca-fundo font-medium text-marca"
                   : "border-borda text-ink-medio hover:border-borda-forte hover:text-ink")
               }
             >
@@ -144,7 +144,7 @@ export function FormularioEstoque({
             <input
               type="checkbox"
               name="atualizarCusto"
-              className="mt-0.5 size-4 accent-[var(--color-ouro)]"
+              className="mt-0.5 size-4 accent-[var(--color-marca)]"
             />
             <span>
               Passar a usar este valor como custo do produto

@@ -64,7 +64,7 @@ export default async function PaginaPainel() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Painel</h1>
+        <h1 className="font-display text-[2.125rem] leading-none font-normal">Painel</h1>
         <p className="mt-1 text-sm text-ink-medio first-letter:uppercase">
           {formatarDataLonga(agora)}
         </p>

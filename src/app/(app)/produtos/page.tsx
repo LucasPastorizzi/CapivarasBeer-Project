@@ -44,7 +44,7 @@ export default async function PaginaProdutos({
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Produtos</h1>
+          <h1 className="font-display text-[2.125rem] leading-none font-normal">Produtos</h1>
           <p className="mt-1 text-sm text-ink-medio">
             {produtos.length}{" "}
             {produtos.length === 1 ? "produto listado" : "produtos listados"}
@@ -52,7 +52,7 @@ export default async function PaginaProdutos({
         </div>
         <Link
           href="/produtos/novo"
-          className="rounded-campo bg-ouro px-4 py-2 text-sm font-medium text-bg transition-colors duration-150 hover:bg-ouro-forte"
+          className="rounded-acao bg-marca px-5 py-2 text-sm font-medium text-sidebar transition-colors duration-150 hover:bg-marca-forte"
         >
           Novo produto
         </Link>
@@ -112,7 +112,7 @@ export default async function PaginaProdutos({
 
         <button
           type="submit"
-          className="rounded-campo border border-borda bg-surface px-4 py-2 text-sm transition-colors duration-150 hover:bg-surface-alto"
+          className="rounded-acao border border-borda px-5 py-2 text-sm transition-colors duration-150 hover:bg-surface-alto"
         >
           Filtrar
         </button>
@@ -179,7 +179,7 @@ export default async function PaginaProdutos({
                     <td className="px-4 py-3">
                       <Link
                         href={`/produtos/${p.id}`}
-                        className="font-medium hover:text-ouro"
+                        className="font-medium hover:text-marca"
                       >
                         {p.nome}
                       </Link>

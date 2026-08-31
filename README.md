@@ -1,7 +1,9 @@
 # Capivaras Beer — Sistema de Gestão
 
-Sistema de gestão para a conveniência **Capivaras Beer**: controle de produtos,
-estoque, vendas (PDV), caixa e relatórios de faturamento.
+Sistema de gestão para a conveniência **Capivaras Beer** (Lindolfo Collor/RS):
+controle de produtos, estoque, vendas (PDV), caixa e relatórios de faturamento.
+
+Um produto **[Flypi Enterprise](https://flypi.com.br)**.
 
 ## Stack
 

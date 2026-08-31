@@ -1,19 +1,30 @@
 # Design
 
-Sistema visual do Capivaras Beer. Derivado da identidade real da loja: logo
-dourado sobre madeira escura, fachada em neon azul, operação noturna.
+Sistema visual do Capivaras Beer — **um produto Flypi Enterprise**
+(flypi.com.br) entregue à loja.
+
+Duas marcas convivem, e a hierarquia entre elas é a decisão que organiza todo
+o resto: **a linguagem visual é da Flypi, o conteúdo é da loja.** A Flypi dá o
+preto, o amarelo, a serifada e a pílula; o Capivaras Beer dá o nome, a
+capivara e os dados. Quem fez assina no rodapé; quem usa ocupa o topo.
+
+Isso resolve um conflito concreto: as duas marcas são amarelas. Se a capivara
+aparecesse dourada ao lado de um botão amarelo, o olho procuraria ação onde só
+há identidade. Por isso a marca da loja é branca, e o amarelo ficou reservado
+a uma coisa só — o que se clica.
 
 ## Theme
 
-**Escuro, e por um motivo concreto.** A loja abre às 17h e fecha à meia-noite.
-O balconista encara a tela por sete horas sob luz baixa, com o neon azul da
-fachada às costas. Uma interface branca nesse ambiente é uma lanterna na cara
-de quem trabalha. O tema escuro aqui não é estética de ferramenta — é a
-condição física de uso.
+**Escuro, e por dois motivos que coincidem.** A loja abre às 17h e fecha à
+meia-noite: o balconista encara a tela por sete horas sob luz baixa, e uma
+interface branca nesse ambiente é uma lanterna na cara de quem trabalha. E o
+preto é a base da identidade da Flypi. A condição de uso e a marca pedem a
+mesma coisa.
 
-Os neutros são levemente quentes (chroma 0.007–0.012 no matiz 75, o mesmo da
-madeira do logo). Não são cinza puro nem bege: puxam para o marrom da marca o
-suficiente para o dourado assentar sem vibrar.
+Os neutros são **sem tinta** — cinzas puros, do preto absoluto da Flypi para
+cima. A versão anterior puxava para o marrom da madeira do logo da loja; com o
+amarelo da Flypi no comando, o neutro quente sujava o acento. Cor agora só
+aparece onde carrega significado.
 
 ## Color
 
@@ -23,12 +34,13 @@ todo o resto é neutro. A cor nunca é o único sinal de estado — sempre acomp
 
 ### Superfícies
 
-| Token | OKLCH | Hex | Uso |
-|---|---|---|---|
-| `--color-sidebar` | `0.125 0.007 75` | `#080604` | Barra lateral: segunda camada neutra, mais funda que o conteúdo |
-| `--color-bg` | `0.185 0.009 75` | `#15120e` | Fundo da área de conteúdo |
-| `--color-surface` | `0.225 0.011 75` | `#1f1b16` | Painéis, tabelas, formulários |
-| `--color-surface-alto` | `0.275 0.013 75` | `#2b2721` | Linha em hover, campo de entrada, elemento elevado |
+| Token | Hex | Uso |
+|---|---|---|
+| `--color-sidebar` | `#000000` | Barra lateral: o preto da Flypi, mais fundo que o conteúdo |
+| `--color-bg` | `#0d0d0e` | Fundo da área de conteúdo |
+| `--color-surface` | `#18181b` | Painéis, tabelas, formulários |
+| `--color-surface-alto` | `#27272a` | Linha em hover, campo de entrada, elemento elevado |
+| `--color-borda` | `#2e2e2e` | Bordas — o mesmo cinza que a Flypi usa no site |
 
 A distância entre a barra lateral e o conteúdo foi aberta de 0.02 para 0.06 de
 luminosidade depois que os dois planos se mostraram indistinguíveis na tela —
@@ -38,32 +50,45 @@ a lateral não se lia como uma camada separada.
 
 | Token | Contraste mínimo | Uso |
 |---|---|---|
-| `--color-ink` | 13.41:1 | Texto principal, números |
-| `--color-ink-medio` | 6.91:1 | Rótulos, texto de apoio, placeholder |
-| `--color-ink-fraco` | 4.68:1 | Metadados, cabeçalho de tabela |
+| `--color-ink` `#ffffff` | 14.89:1 | Texto principal, números |
+| `--color-ink-medio` `#a3a3a3` | 5.90:1 | Rótulos, texto de apoio, placeholder |
+| `--color-ink-fraco` `#919195` | 4.74:1 | Metadados, cabeçalho de tabela |
+
+O `ink-fraco` nasceu em `#8b8b8f` e reprovou: 4.39:1 sobre o painel elevado.
+Foi clareado até passar.
 
 Nenhum token de texto fica abaixo de 4.5:1 em nenhuma das quatro superfícies —
 inclusive placeholders, que é onde interface escura costuma falhar.
 
 ### Acentos e estados
 
-| Token | OKLCH | Hex | Papel |
-|---|---|---|---|
-| `--color-ouro` | `0.800 0.130 82` | `#e7b551` | Marca, ação primária, item de menu ativo |
-| `--color-neon` | `0.720 0.150 240` | `#30aff8` | Anel de foco e links — o azul da fachada |
-| `--color-ok` | `0.760 0.150 152` | `#5bcc80` | Venda concluída, caixa conferido |
-| `--color-alerta` | `0.780 0.160 55` | `#ff9845` | Estoque abaixo do mínimo |
-| `--color-perigo` | `0.680 0.190 25` | `#f75d59` | Venda cancelada, quebra de caixa, exclusão |
+| Token | Hex | Papel |
+|---|---|---|
+| `--color-marca` | `#fde047` | O amarelo da Flypi: ação primária e item de menu ativo |
+| `--color-neon` | `#30aff8` | Anel de foco e links |
+| `--color-ok` | `#5bcc80` | Venda concluída, caixa conferido |
+| `--color-alerta` | `#ff9845` | Estoque abaixo do mínimo |
+| `--color-perigo` | `#f75d59` | Venda cancelada, quebra de caixa, exclusão |
 
-O dourado fica reservado a ação primária e seleção. O azul do neon é o anel de
-foco: separa "onde estou navegando" de "qual o estado do dado", que é
-justamente onde interfaces de PDV confundem o operador.
+O amarelo é reservado a ação e seleção — nunca decoração, nunca identidade. O
+azul é o anel de foco: separa "onde estou navegando" de "qual o estado do
+dado", que é justamente onde interfaces de PDV confundem o operador.
 
 ## Typography
 
-Uma família só: **Geist Sans**, em pesos 400/500/600. Produto não precisa de
-par display/corpo, e um segundo tipo aqui só criaria ruído entre rótulo e
-número.
+Duas famílias, com fronteira rígida.
+
+**Instrument Serif** — a serifada da Flypi — aparece em exatamente dois
+lugares: título de página e logotipo. Um peso só, porque não há hierarquia
+dentro dela para justificar mais.
+
+**Geist Sans** carrega todo o resto: rótulo, tabela, número, botão, corpo.
+Nenhum dado usa a serifada, e a razão é prática: coluna de valor precisa de
+dígito de largura fixa para ser conferida, e é o Geist que entrega isso.
+
+Essa fronteira é o que separa "sistema com voz" de "sistema enfeitado". A
+serifada dá identidade ao topo da página; abaixo dela, tudo desaparece dentro
+da tarefa.
 
 Escala fixa em rem (razão ~1.2), não fluida — o operador usa sempre o mesmo
 notebook, e título que encolhe dentro de painel piora a leitura.
@@ -147,3 +172,28 @@ Dias sem venda entram na série com zero em vez de sumir: um buraco é
 informação — a loja não abre domingo e segunda — e uma barra ausente mentiria
 sobre o ritmo da semana. O dia de hoje aparece em ouro, para separar "o que já
 acontece" de "o que já aconteceu".
+
+
+## Forma
+
+**Ação é pílula, campo é reto.** A regra vem da Flypi, que usa botões
+totalmente arredondados no site, e vale sem exceção no sistema: onde se clica
+tem `--radius-acao` (9999px), onde se digita tem `--radius-campo` (0.5rem).
+
+Isso não é decoração — é uma pista de affordance consistente. Num sistema com
+seletores segmentados (período do relatório, forma de pagamento, tipo de
+movimento), a pílula diz "isto responde ao clique" antes de qualquer cor.
+
+Painéis usam `--radius-painel` (0.875rem): mais brando que a pílula, mais
+presente que o campo, para a moldura não competir com o que ela contém.
+
+## Assinatura
+
+A Flypi assina em dois lugares, ambos discretos e ambos fora do caminho da
+tarefa: no rodapé da barra lateral, abaixo da conta do usuário, e na tela de
+entrada, depois de uma linha separadora. Os dois levam a flypi.com.br.
+
+O símbolo é uma redução do logotipo a dois traços — a diagonal ascendente e a
+curva da asa. É provisório: o logotipo original é um PNG hospedado no site da
+Flypi, e o arquivo vetorial deve substituir esta redução quando estiver
+disponível.

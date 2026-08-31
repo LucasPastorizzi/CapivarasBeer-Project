@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { sair } from "@/app/login/acoes";
+import { AssinaturaFlypi } from "@/components/flypi";
 import { SeloCapivara } from "@/components/marca";
 import { NavegacaoInferior, NavegacaoLateral } from "@/components/navegacao";
 import { exigirSessao } from "@/lib/autenticacao";
@@ -9,12 +10,12 @@ function Marca({ href }: { href: string }) {
   return (
     <Link
       href={href}
-      className="flex items-center gap-2.5 rounded-campo px-3 py-4 transition-colors duration-150 hover:text-ouro"
+      className="flex items-center gap-2.5 rounded-campo px-3 py-4 transition-colors duration-150 hover:text-marca"
     >
-      <SeloCapivara className="size-9" />
-      <span className="text-sm leading-tight font-semibold">
-        Capivaras Beer
-        <span className="block text-xs font-normal text-ink-fraco">
+      <SeloCapivara className="size-8" />
+      <span className="leading-none">
+        <span className="font-display text-xl">Capivaras Beer</span>
+        <span className="mt-1 block text-xs text-ink-fraco">
           Lindolfo Collor
         </span>
       </span>
@@ -31,29 +32,36 @@ function Rodape({ nome, papel }: { nome: string; papel: string }) {
     .toUpperCase();
 
   return (
-    <div className="mt-auto border-t border-borda p-3">
-      <div className="flex items-center gap-2.5 px-1 py-1">
-        <span
-          aria-hidden
-          className="grid size-8 shrink-0 place-items-center rounded-full bg-surface-alto text-xs font-medium text-ink-medio"
-        >
-          {iniciais}
-        </span>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{nome}</p>
-          <p className="text-xs text-ink-fraco">
-            {papel === "DONO" ? "Dono" : "Balconista"}
-          </p>
+    <div className="mt-auto">
+      <div className="border-t border-borda p-3">
+        <div className="flex items-center gap-2.5 px-1 pt-1 pb-2">
+          <span
+            aria-hidden
+            className="grid size-8 shrink-0 place-items-center rounded-full border border-borda text-xs font-medium text-ink-medio"
+          >
+            {iniciais}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">{nome}</p>
+            <p className="text-xs text-ink-fraco">
+              {papel === "DONO" ? "Dono" : "Balconista"}
+            </p>
+          </div>
         </div>
+        <form action={sair}>
+          <button
+            type="submit"
+            className="w-full rounded-campo px-3 py-2 text-left text-sm text-ink-medio transition-colors duration-150 hover:bg-surface hover:text-ink"
+          >
+            Sair
+          </button>
+        </form>
       </div>
-      <form action={sair}>
-        <button
-          type="submit"
-          className="mt-1 w-full rounded-campo px-3 py-2 text-left text-sm text-ink-medio transition-colors duration-150 hover:bg-surface hover:text-ink"
-        >
-          Sair
-        </button>
-      </form>
+
+      {/* Quem fez assina embaixo de tudo; quem usa ocupa o topo. */}
+      <div className="border-t border-borda px-4 py-3">
+        <AssinaturaFlypi />
+      </div>
     </div>
   );
 }
@@ -74,7 +82,7 @@ export default async function LayoutDoApp({ children }: LayoutProps<"/">) {
       {/* Cabeçalho só no celular, onde não há barra lateral para se localizar. */}
       <header className="fixed inset-x-0 top-0 z-[var(--z-fixo)] flex items-center gap-2.5 border-b border-borda bg-sidebar px-4 py-2.5 md:hidden">
         <SeloCapivara className="size-7" />
-        <span className="text-sm font-semibold">Capivaras Beer</span>
+        <span className="font-display text-lg leading-none">Capivaras Beer</span>
       </header>
 
       {/* Os espaçamentos no celular abrem lugar para o cabeçalho fixo em cima

@@ -209,7 +209,7 @@ export function FormularioProduto({
         </Botao>
         <Link
           href="/produtos"
-          className="inline-flex items-center rounded-campo border border-borda px-4 py-2 text-sm text-ink-medio transition-colors duration-150 hover:bg-surface-alto hover:text-ink"
+          className="inline-flex items-center rounded-acao border border-borda px-5 py-2 text-sm text-ink-medio transition-colors duration-150 hover:bg-surface-alto hover:text-ink"
         >
           Voltar
         </Link>

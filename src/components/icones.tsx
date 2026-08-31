@@ -87,11 +87,17 @@ export function IconeOk({ className }: Props) {
   );
 }
 
+/**
+ * Balão de conversa, não faísca.
+ *
+ * A estrelinha virou o carimbo universal de "tem IA aqui" e não diz nada
+ * sobre o que a tela faz. O que se faz aqui é perguntar.
+ */
 export function IconeAssistente({ className }: Props) {
   return (
     <svg {...base} className={className}>
-      <path d="M12 3.2 13.6 8l4.8 1.6-4.8 1.6L12 16l-1.6-4.8L5.6 9.6 10.4 8z" />
-      <path d="M18.5 15.2l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" />
+      <path d="M20.5 12.4c0 4-3.8 7.2-8.5 7.2-1 0-2-.15-2.9-.42L4 20.8l1.5-3.7c-1.3-1.25-2-2.9-2-4.7 0-4 3.8-7.2 8.5-7.2s8.5 3.2 8.5 7.2Z" />
+      <path d="M10.1 10.4a2 2 0 0 1 3.9.6c0 1.3-2 1.6-2 2.6M12 16.1h.01" />
     </svg>
   );
 }

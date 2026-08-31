@@ -368,9 +368,9 @@ export function TelaDeVenda({ produtos }: { produtos: ProdutoParaVenda[] }) {
                 onClick={() => setForma(f)}
                 aria-pressed={forma === f}
                 className={
-                  "rounded-campo border px-3 py-2 text-sm transition-colors duration-150 " +
+                  "rounded-acao border px-3 py-2 text-sm transition-colors duration-150 " +
                   (forma === f
-                    ? "border-ouro bg-ouro-fundo font-medium text-ouro"
+                    ? "border-marca bg-marca-fundo font-medium text-marca"
                     : "border-borda text-ink-medio hover:border-borda-forte hover:text-ink")
                 }
               >

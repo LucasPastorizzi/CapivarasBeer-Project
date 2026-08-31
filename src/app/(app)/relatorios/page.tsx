@@ -93,7 +93,7 @@ export default async function PaginaRelatorios({
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Relatórios</h1>
+          <h1 className="font-display text-[2.125rem] leading-none font-normal">Relatórios</h1>
           <p className="mt-1 text-sm text-ink-medio">
             {dataCurta.format(intervalo.de)} a {dataCurta.format(ultimoDia)}
           </p>
@@ -101,7 +101,7 @@ export default async function PaginaRelatorios({
 
         <a
           href={`/relatorios/exportar?periodo=${periodo}`}
-          className="rounded-campo border border-borda bg-surface px-4 py-2 text-sm transition-colors duration-150 hover:bg-surface-alto"
+          className="rounded-acao border border-borda px-5 py-2 text-sm transition-colors duration-150 hover:bg-surface-alto"
         >
           Baixar planilha
         </a>
@@ -116,9 +116,9 @@ export default async function PaginaRelatorios({
             href={`/relatorios?periodo=${p.valor}`}
             aria-current={p.valor === periodo ? "page" : undefined}
             className={
-              "rounded-campo border px-3 py-1.5 text-sm transition-colors duration-150 " +
+              "rounded-acao border px-4 py-1.5 text-sm transition-colors duration-150 " +
               (p.valor === periodo
-                ? "border-ouro bg-ouro-fundo font-medium text-ouro"
+                ? "border-marca bg-marca-fundo font-medium text-marca"
                 : "border-borda text-ink-medio hover:border-borda-forte hover:text-ink")
             }
           >
@@ -135,7 +135,7 @@ export default async function PaginaRelatorios({
             acao={
               <Link
                 href="/pdv"
-                className="rounded-campo bg-ouro px-4 py-2 text-sm font-medium text-bg transition-colors duration-150 hover:bg-ouro-forte"
+                className="rounded-acao bg-marca px-5 py-2 text-sm font-medium text-sidebar transition-colors duration-150 hover:bg-marca-forte"
               >
                 Ir para o balcão
               </Link>

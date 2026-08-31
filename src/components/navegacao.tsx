@@ -76,7 +76,7 @@ export function NavegacaoLateral({ papel }: { papel: Papel }) {
       {grupos.map((grupo) => (
         <div key={grupo.titulo}>
           {mostrarTitulos && (
-            <h2 className="mb-1.5 px-3 text-xs font-medium text-ink-fraco">
+            <h2 className="mb-2 px-3 text-[0.6875rem] font-medium tracking-[0.14em] text-ink-fraco uppercase">
               {grupo.titulo}
             </h2>
           )}
@@ -92,7 +92,7 @@ export function NavegacaoLateral({ papel }: { papel: Papel }) {
                       "flex items-center gap-3 rounded-campo px-3 py-2 text-sm",
                       "transition-colors duration-150 ease-saida",
                       ativo
-                        ? "bg-ouro-fundo font-medium text-ouro"
+                        ? "bg-marca-fundo font-medium text-marca"
                         : "text-ink-medio hover:bg-surface hover:text-ink",
                     ].join(" ")}
                   >
@@ -129,7 +129,7 @@ export function NavegacaoInferior({ papel }: { papel: Papel }) {
             className={[
               "flex flex-1 flex-col items-center gap-1 py-2.5 text-xs",
               "transition-colors duration-150",
-              ativo ? "text-ouro" : "text-ink-medio",
+              ativo ? "text-marca" : "text-ink-medio",
             ].join(" ")}
           >
             <Icone className="size-5" />

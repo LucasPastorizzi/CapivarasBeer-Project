@@ -121,7 +121,7 @@ export function AssistenteConversa() {
                   <button
                     type="button"
                     onClick={() => perguntar(s)}
-                    className="rounded-campo border border-borda px-3 py-1.5 text-sm text-ink-medio transition-colors duration-150 hover:border-borda-forte hover:text-ink"
+                    className="rounded-acao border border-borda px-4 py-1.5 text-sm text-ink-medio transition-colors duration-150 hover:border-borda-forte hover:text-ink"
                   >
                     {s}
                   </button>
@@ -156,7 +156,7 @@ export function AssistenteConversa() {
             role="status"
             className="flex items-center gap-2 text-sm text-ink-fraco"
           >
-            <span className="size-1.5 animate-pulse rounded-full bg-ouro" />
+            <span className="size-1.5 animate-pulse rounded-full bg-marca" aria-hidden />
             {consultando}…
           </p>
         )}

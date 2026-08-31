@@ -132,7 +132,7 @@ export default async function PaginaCaixa() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-xl font-semibold tracking-tight">Caixa</h1>
+        <h1 className="font-display text-[2.125rem] leading-none font-normal">Caixa</h1>
         <p className="mt-1 text-sm text-ink-medio">
           {resumo
             ? `Aberto às ${formatarHora(resumo.caixa.abertoEm)} por ${resumo.caixa.usuarioAbertura.nome}.`

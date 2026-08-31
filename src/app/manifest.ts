@@ -13,12 +13,12 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Capivaras Beer — Gestão",
     short_name: "Capivaras",
     description:
-      "Vendas, estoque, caixa e relatórios da conveniência Capivaras Beer.",
+      "Vendas, estoque, caixa e relatórios da conveniência Capivaras Beer. Um produto Flypi Enterprise.",
     lang: "pt-BR",
     start_url: "/",
     display: "standalone",
     orientation: "any",
-    background_color: "#15120e",
+    background_color: "#0d0d0e",
     theme_color: "#080604",
     icons: [
       {

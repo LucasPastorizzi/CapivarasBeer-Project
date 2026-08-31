@@ -10,15 +10,15 @@ import type { ComponentProps, ReactNode } from "react";
 type VarianteBotao = "primario" | "secundario" | "perigo";
 
 const BASE_BOTAO =
-  "inline-flex items-center justify-center gap-2 rounded-campo px-4 py-2 text-sm font-medium " +
+  "inline-flex items-center justify-center gap-2 rounded-acao px-5 py-2 text-sm font-medium " +
   "transition-colors duration-150 ease-saida " +
   "disabled:cursor-not-allowed disabled:opacity-50";
 
 const VARIANTES: Record<VarianteBotao, string> = {
   primario:
-    "bg-ouro text-bg hover:bg-ouro-forte active:bg-ouro-forte disabled:hover:bg-ouro",
+    "bg-marca text-sidebar hover:bg-marca-forte active:bg-marca-forte disabled:hover:bg-marca",
   secundario:
-    "border border-borda bg-surface text-ink hover:bg-surface-alto hover:border-borda-forte active:bg-surface disabled:hover:bg-surface",
+    "border border-borda text-ink hover:bg-surface-alto hover:border-borda-forte active:bg-surface disabled:hover:bg-transparent",
   perigo:
     "border border-perigo/40 bg-perigo-fundo text-perigo hover:border-perigo active:bg-perigo-fundo",
 };
@@ -220,8 +220,10 @@ export function Painel({
   return (
     <section className="rounded-painel border border-borda bg-surface">
       {titulo && (
-        <header className="flex items-center justify-between gap-3 border-b border-borda px-5 py-3">
-          <h2 className="text-sm font-semibold">{titulo}</h2>
+        <header className="flex items-center justify-between gap-3 border-b border-borda px-5 py-3.5">
+          <h2 className="text-[0.6875rem] font-medium tracking-[0.14em] text-ink-medio uppercase">
+            {titulo}
+          </h2>
           {acao}
         </header>
       )}
@@ -274,7 +276,7 @@ export function Linha({
 /** Tecla física, para as dicas de atalho do balcão. */
 export function Tecla({ children }: { children: ReactNode }) {
   return (
-    <kbd className="rounded-[4px] border border-borda bg-surface-alto px-1.5 py-0.5 font-mono text-[0.6875rem] text-ink-medio">
+    <kbd className="rounded-[5px] border border-borda bg-surface-alto px-1.5 py-0.5 font-mono text-[0.6875rem] text-ink-medio">
       {children}
     </kbd>
   );

@@ -88,7 +88,7 @@ export function GraficoDiario({ serie }: { serie: PontoDiario[] }) {
                 style={{
                   height: `${Math.max(altura, ponto.totalCentavos > 0 ? 2 : 0)}%`,
                   backgroundColor: ehHoje
-                    ? "var(--color-ouro)"
+                    ? "var(--color-marca)"
                     : "var(--color-serie-1)",
                   opacity: ativo === null || ativo === i ? 1 : 0.45,
                 }}

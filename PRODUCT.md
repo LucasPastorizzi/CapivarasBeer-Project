@@ -26,10 +26,17 @@ número diário e mensal que o dono usa para decidir o que comprar.
 Sucesso é: o balconista prefere o sistema ao caderno porque é mais rápido, e o
 dono confia no total do fim do mês sem conferir na mão.
 
+## Quem faz e quem usa
+
+O sistema é um produto da **Flypi Enterprise** (flypi.com.br) entregue ao
+Capivaras Beer. A linguagem visual é da Flypi — preto, amarelo, serifada,
+pílula; o conteúdo e o nome são da loja. Quem fez assina no rodapé, quem usa
+ocupa o topo.
+
 ## Brand Personality
 
-Ferramenta séria. Sóbria, densa, rápida. A marca — a capivara, o dourado sobre
-madeira escura, o neon azul da fachada — vive no logo e nos acentos; o resto da
+Ferramenta séria. Sóbria, densa, rápida. A identidade vive no topo da página —
+o nome em serifada, a capivara, o amarelo do que se clica — e o resto da
 interface desaparece dentro da tarefa. Voz direta em português do Brasil, sem
 jargão de software: "Fechar caixa", não "Encerrar sessão operacional".
 

@@ -45,7 +45,7 @@ export default async function PaginaEstoque({
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Estoque</h1>
+        <h1 className="font-display text-[2.125rem] leading-none font-normal">Estoque</h1>
         <p className="mt-1 max-w-prose text-sm text-ink-medio">
           Toda alteração de estoque vira um registro aqui — inclusive as vendas.
           É o que permite responder, meses depois, por que a contagem mudou.
