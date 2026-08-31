@@ -19,6 +19,7 @@ estoque, vendas (PDV), caixa e relatórios de faturamento.
 | Caixa | Abertura, fechamento, sangria e conferência |
 | Relatórios | Total diário, total mensal, produtos mais vendidos, margem de lucro |
 | Usuários | Perfis de dono (acesso total) e balconista (somente PDV) |
+| Assistente | Perguntas em português sobre a loja, respondidas a partir dos dados reais |
 
 Todos os módulos acima estão implementados.
 
@@ -30,6 +31,22 @@ npm run dev
 ```
 
 A aplicação sobe em http://localhost:3000
+
+## Assistente
+
+A aba **Assistente** responde perguntas em português consultando os dados
+reais: "como foi o movimento este mês", "qual produto me dá mais lucro", "o
+que precisa repor". Ele **só lê** — não registra venda, não muda preço, não
+mexe no estoque.
+
+Para ligá-lo, coloque uma chave da API da Anthropic no `.env`:
+
+```
+ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+Sem a chave, a aba avisa que não foi configurada e o resto do sistema segue
+funcionando normalmente. Cada pergunta consome créditos da sua conta.
 
 ## Instalar como aplicativo
 

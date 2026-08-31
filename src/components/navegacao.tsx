@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  IconeAssistente,
   IconeCaixa,
   IconeEstoque,
   IconePainel,
@@ -43,6 +44,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
       { href: "/produtos", rotulo: "Produtos", Icone: IconeProdutos, soDono: true },
       { href: "/estoque", rotulo: "Estoque", Icone: IconeEstoque, soDono: true },
       { href: "/relatorios", rotulo: "Relatórios", Icone: IconeRelatorios, soDono: true },
+      { href: "/assistente", rotulo: "Assistente", Icone: IconeAssistente, soDono: true },
     ],
   },
 ];

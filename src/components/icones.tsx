@@ -86,3 +86,12 @@ export function IconeOk({ className }: Props) {
     </svg>
   );
 }
+
+export function IconeAssistente({ className }: Props) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M12 3.2 13.6 8l4.8 1.6-4.8 1.6L12 16l-1.6-4.8L5.6 9.6 10.4 8z" />
+      <path d="M18.5 15.2l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" />
+    </svg>
+  );
+}
