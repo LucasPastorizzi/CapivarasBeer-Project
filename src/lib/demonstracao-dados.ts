@@ -62,8 +62,31 @@ const PAGAMENTOS: [string, number][] = [
 
 const DIAS = 21;
 
+/**
+ * Sorteio previsível.
+ *
+ * A Vercel atende com várias instâncias, e cada uma monta o próprio banco em
+ * /tmp. Com `Math.random` e IDs automáticos, cada instância criava produtos
+ * diferentes: a lista vinha de uma, o clique caía em outra, e o produto não
+ * existia lá — 404 em todo link.
+ *
+ * Com semente fixa, toda instância gera exatamente os mesmos dados e os
+ * mesmos identificadores. O visitante navega como se houvesse um banco só.
+ */
+function geradorEstavel(semente: number) {
+  let a = semente;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const aleatorio = geradorEstavel(20260831);
+
 function sortearPagamento(): string {
-  const n = Math.random();
+  const n = aleatorio();
   let acumulado = 0;
   for (const [forma, peso] of PAGAMENTOS) {
     acumulado += peso;
@@ -72,14 +95,20 @@ function sortearPagamento(): string {
   return "PIX";
 }
 
+/** Número com zeros à esquerda, para os identificadores ordenarem certo. */
+const seq = (n: number, casas = 3) => String(n).padStart(casas, "0");
+
 export async function semearCatalogo() {
   const senha = await bcrypt.hash(
     process.env.SENHA_DEMONSTRACAO ?? "capivaras123",
     10,
   );
 
+  // Identificadores fixos, não gerados: é o que faz um link criado numa
+  // instância continuar válido em qualquer outra.
   const dono = await prisma.usuario.create({
     data: {
+      id: "dem-usr-dono",
       nome: "Dono",
       email: "dono@capivarasbeer.com.br",
       senhaHash: senha,
@@ -88,6 +117,7 @@ export async function semearCatalogo() {
   });
   const balcao = await prisma.usuario.create({
     data: {
+      id: "dem-usr-balcao",
       nome: "Balcão",
       email: "balcao@capivarasbeer.com.br",
       senhaHash: senha,
@@ -96,16 +126,20 @@ export async function semearCatalogo() {
   });
 
   const categorias = new Map<string, string>();
-  for (const [nome, cor] of CATEGORIAS) {
-    const c = await prisma.categoria.create({ data: { nome, cor } });
+  for (const [indice, [nome, cor]] of CATEGORIAS.entries()) {
+    const c = await prisma.categoria.create({
+      data: { id: `dem-cat-${seq(indice + 1)}`, nome, cor },
+    });
     categorias.set(nome, c.id);
   }
 
   const produtos: ProdutoModel[] = [];
-  for (const [nome, cat, custo, venda, estoque, minimo, multiplo] of PRODUTOS) {
+  for (const [indice, linha] of PRODUTOS.entries()) {
+    const [nome, cat, custo, venda, estoque, minimo, multiplo] = linha;
     produtos.push(
       await prisma.produto.create({
         data: {
+          id: `dem-prd-${seq(indice + 1)}`,
           nome,
           categoriaId: categorias.get(cat)!,
           precoCustoCentavos: custo,
@@ -139,6 +173,7 @@ export async function semearCatalogo() {
 
     const caixa = await prisma.caixa.create({
       data: {
+        id: `dem-cx-${seq(d)}`,
         usuarioAberturaId: balcao.id,
         valorAberturaCentavos: 15000,
         abertoEm: dia,
@@ -148,22 +183,23 @@ export async function semearCatalogo() {
       },
     });
 
-    const quantas = Math.round((7 + Math.random() * 7) * peso);
+    const quantas = Math.round((7 + aleatorio() * 7) * peso);
 
     for (let v = 0; v < quantas; v += 1) {
       const momento = new Date(dia);
-      momento.setHours(17 + Math.floor(Math.random() * 6));
-      momento.setMinutes(Math.floor(Math.random() * 60));
+      momento.setHours(17 + Math.floor(aleatorio() * 6));
+      momento.setMinutes(Math.floor(aleatorio() * 60));
 
       const linhas = new Map<string, number>();
-      for (let i = 0; i < 1 + Math.floor(Math.random() * 3); i += 1) {
-        const p = urna[Math.floor(Math.random() * urna.length)];
+      for (let i = 0; i < 1 + Math.floor(aleatorio() * 3); i += 1) {
+        const p = urna[Math.floor(aleatorio() * urna.length)];
         linhas.set(p.id, (linhas.get(p.id) ?? 0) + 1);
       }
 
-      const itens = [...linhas.entries()].map(([id, quantidade]) => {
+      const itens = [...linhas.entries()].map(([id, quantidade], posicao) => {
         const p = produtos.find((x) => x.id === id)!;
         return {
+          id: `dem-itv-${seq(numero, 4)}-${posicao}`,
           produtoId: p.id,
           quantidade,
           precoUnitarioCentavos: p.precoVendaCentavos,
@@ -177,6 +213,7 @@ export async function semearCatalogo() {
 
       await prisma.venda.create({
         data: {
+          id: `dem-vnd-${seq(numero, 4)}`,
           numero,
           caixaId: caixa.id,
           usuarioId: balcao.id,
@@ -196,6 +233,7 @@ export async function semearCatalogo() {
   // Um caixa aberto para a vitrine mostrar o PDV funcionando de verdade.
   await prisma.caixa.create({
     data: {
+      id: "dem-cx-aberto",
       usuarioAberturaId: balcao.id,
       valorAberturaCentavos: 15000,
       status: "ABERTO",
