@@ -11,6 +11,7 @@ import {
   IconePdv,
   IconeProdutos,
   IconeRelatorios,
+  IconeVendas,
 } from "@/components/icones";
 
 type Papel = "DONO" | "BALCONISTA";
@@ -36,6 +37,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
     itens: [
       { href: "/pdv", rotulo: "Vender", Icone: IconePdv },
       { href: "/caixa", rotulo: "Caixa", Icone: IconeCaixa },
+      { href: "/vendas", rotulo: "Vendas", Icone: IconeVendas },
     ],
   },
   {
