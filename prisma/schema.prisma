@@ -30,6 +30,8 @@ model Usuario {
   caixasAbertos     Caixa[]
   vendas            Venda[]
   vendasCanceladas  Venda[]            @relation("VendasCanceladas")
+  comandasAbertas   Comanda[]
+  itensLancados     ItemComanda[]
   movimentosEstoque MovimentoEstoque[]
   movimentosCaixa   MovimentoCaixa[]
 
@@ -70,9 +72,10 @@ model Produto {
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  categoria  Categoria          @relation(fields: [categoriaId], references: [id])
-  itensVenda ItemVenda[]
-  movimentos MovimentoEstoque[]
+  categoria    Categoria          @relation(fields: [categoriaId], references: [id])
+  itensVenda   ItemVenda[]
+  itensComanda ItemComanda[]
+  movimentos   MovimentoEstoque[]
 
   @@index([categoriaId])
   @@index([nome])
@@ -80,7 +83,7 @@ model Produto {
 
 /// Trilha de auditoria do estoque. Toda alteração de `Produto.estoqueAtual`
 /// nasce de um registro aqui, para que a contagem seja sempre reconstituível.
-/// `tipo` = "ENTRADA" | "SAIDA_VENDA" | "AJUSTE" | "PERDA"
+/// `tipo` = "ENTRADA" | "SAIDA_VENDA" | "SAIDA_COMANDA" | "AJUSTE" | "PERDA"
 model MovimentoEstoque {
   id        String @id @default(cuid())
   produtoId String
@@ -118,6 +121,7 @@ model Caixa {
   usuarioAbertura Usuario          @relation(fields: [usuarioAberturaId], references: [id])
   vendas          Venda[]
   movimentos      MovimentoCaixa[]
+  comandas        Comanda[]
 
   @@index([abertoEm])
   @@index([status])
@@ -170,6 +174,7 @@ model Venda {
   canceladaPor      Usuario?           @relation("VendasCanceladas", fields: [canceladaPorId], references: [id])
   itens             ItemVenda[]
   movimentosEstoque MovimentoEstoque[]
+  comanda           Comanda?
 
   @@index([criadoEm])
   @@index([caixaId])
@@ -193,4 +198,60 @@ model ItemVenda {
 
   @@index([vendaId])
   @@index([produtoId])
+}
+
+/// Conta aberta de quem consome no local.
+///
+/// O Capivaras Beer tem mesas: o cliente senta, pede várias vezes ao longo da
+/// noite e paga no fim. O PDV só sabe fazer venda fechada — bipa, paga, acaba
+/// — então esse movimento acontecia no papel, fora do sistema.
+///
+/// `status` = "ABERTA" | "FECHADA" | "CANCELADA"
+model Comanda {
+  id            String @id @default(cuid())
+  /// Número curto para gritar no balcão. Atribuído dentro da transação.
+  numero        Int    @unique
+  /// "Mesa 3", "João da esquina" — o que o balconista usa para achar a conta.
+  identificacao String
+
+  caixaId     String
+  abertaPorId String
+  abertaEm    DateTime  @default(now())
+  fechadaEm   DateTime?
+  status      String    @default("ABERTA")
+  observacao  String?
+
+  /// A venda gerada no fechamento. Só existe depois que a conta é paga.
+  vendaId String? @unique
+
+  caixa     Caixa         @relation(fields: [caixaId], references: [id])
+  abertaPor Usuario       @relation(fields: [abertaPorId], references: [id])
+  venda     Venda?        @relation(fields: [vendaId], references: [id])
+  itens     ItemComanda[]
+
+  @@index([status])
+  @@index([caixaId])
+}
+
+/// Uma rodada lançada na conta.
+///
+/// Preço e custo são copiados no momento do lançamento, pela mesma razão do
+/// ItemVenda: reajuste do fornecedor amanhã não reescreve a conta de hoje.
+model ItemComanda {
+  id                    String @id @default(cuid())
+  comandaId             String
+  produtoId             String
+  quantidade            Int
+  precoUnitarioCentavos Int
+  custoUnitarioCentavos Int
+  subtotalCentavos      Int
+
+  lancadoPorId String
+  criadoEm     DateTime @default(now())
+
+  comanda    Comanda @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  produto    Produto @relation(fields: [produtoId], references: [id])
+  lancadoPor Usuario @relation(fields: [lancadoPorId], references: [id])
+
+  @@index([comandaId])
 }

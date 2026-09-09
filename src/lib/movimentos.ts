@@ -19,6 +19,7 @@ export type TipoManual = (typeof TIPOS_MANUAIS)[number];
 export const ROTULO_MOVIMENTO: Record<string, string> = {
   ENTRADA: "Entrada",
   SAIDA_VENDA: "Venda",
+  SAIDA_COMANDA: "Comanda",
   AJUSTE: "Ajuste",
   PERDA: "Perda",
 };

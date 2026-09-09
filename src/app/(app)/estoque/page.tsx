@@ -21,6 +21,7 @@ const dataHora = new Intl.DateTimeFormat("pt-BR", {
 const TOM: Record<string, string> = {
   ENTRADA: "bg-ok-fundo text-ok",
   SAIDA_VENDA: "bg-surface-alto text-ink-medio",
+  SAIDA_COMANDA: "bg-surface-alto text-ink-medio",
   AJUSTE: "bg-alerta-fundo text-alerta",
   PERDA: "bg-perigo-fundo text-perigo",
 };
