@@ -5,6 +5,7 @@ import { z } from "zod";
 import { exigirSessao } from "@/lib/autenticacao";
 import { buscarCaixaAberto } from "@/lib/caixa";
 import { FORMAS_PAGAMENTO } from "@/lib/pagamentos";
+import { DESCONTO_MAXIMO, descontoPermitido } from "@/lib/politicas";
 import { prisma } from "@/lib/prisma";
 
 export type ResultadoVenda =
@@ -106,6 +107,14 @@ export async function registrarVenda(
 
       if (descontoCentavos > subtotalCentavos) {
         throw new ErroDeVenda("O desconto é maior que o valor da venda.");
+      }
+
+      // O teto é conferido aqui, com o subtotal calculado do banco. Conferir
+      // só na tela deixaria a regra do lado de quem ela limita.
+      if (!descontoPermitido(sessao.papel, subtotalCentavos, descontoCentavos)) {
+        throw new ErroDeVenda(
+          `Desconto acima do seu limite de ${DESCONTO_MAXIMO[sessao.papel]}%. Peça ao dono para aplicar.`,
+        );
       }
 
       const totalCentavos = subtotalCentavos - descontoCentavos;

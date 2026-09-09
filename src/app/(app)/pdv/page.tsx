@@ -10,7 +10,7 @@ export const metadata = { title: "Vender" };
 export const dynamic = "force-dynamic";
 
 export default async function PaginaPdv() {
-  await exigirSessao();
+  const sessao = await exigirSessao();
 
   const caixa = await buscarCaixaAberto();
 
@@ -50,7 +50,7 @@ export default async function PaginaPdv() {
         </p>
       </header>
 
-      <TelaDeVenda produtos={produtos} />
+      <TelaDeVenda produtos={produtos} papel={sessao.papel} />
     </div>
   );
 }

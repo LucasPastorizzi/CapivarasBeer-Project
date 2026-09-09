@@ -13,6 +13,8 @@ import {
 } from "@/lib/pagamentos";
 import { formatarCentavos, inputParaCentavos } from "@/lib/dinheiro";
 import type { ProdutoParaVenda } from "@/lib/pdv";
+import { DESCONTO_MAXIMO, tetoDeDesconto } from "@/lib/politicas";
+import type { Papel } from "@/lib/sessao";
 import { normalizar } from "@/lib/texto";
 
 type ItemDoCarrinho = {
@@ -22,7 +24,13 @@ type ItemDoCarrinho = {
 
 const LIMITE_RESULTADOS = 8;
 
-export function TelaDeVenda({ produtos }: { produtos: ProdutoParaVenda[] }) {
+export function TelaDeVenda({
+  produtos,
+  papel,
+}: {
+  produtos: ProdutoParaVenda[];
+  papel: Papel;
+}) {
   const [busca, setBusca] = useState("");
   const [selecionado, setSelecionado] = useState(0);
   const [carrinho, setCarrinho] = useState<ItemDoCarrinho[]>([]);
@@ -68,16 +76,24 @@ export function TelaDeVenda({ produtos }: { produtos: ProdutoParaVenda[] }) {
     (soma, i) => soma + i.produto.precoVendaCentavos * i.quantidade,
     0,
   );
-  const descontoCentavos = Math.min(
+  const descontoDigitado = Math.min(
     inputParaCentavos(desconto) ?? 0,
     subtotalCentavos,
   );
+
+  // O teto aparece na tela antes de a pessoa tentar fechar a venda. O
+  // servidor recusa de todo jeito, mas descobrir o limite só no erro é
+  // desrespeito com quem está de frente para o cliente.
+  const tetoCentavos = tetoDeDesconto(papel, subtotalCentavos);
+  const descontoAcimaDoTeto = descontoDigitado > tetoCentavos;
+  const descontoCentavos = descontoAcimaDoTeto ? 0 : descontoDigitado;
   const totalCentavos = subtotalCentavos - descontoCentavos;
   const recebidoCentavos = inputParaCentavos(recebido) ?? 0;
   const trocoCentavos = recebidoCentavos - totalCentavos;
 
   const faltaDinheiro = forma === "DINHEIRO" && recebidoCentavos < totalCentavos;
-  const podeFinalizar = carrinho.length > 0 && !faltaDinheiro && !enviando;
+  const podeFinalizar =
+    carrinho.length > 0 && !faltaDinheiro && !descontoAcimaDoTeto && !enviando;
 
   function adicionar(produto: ProdutoParaVenda) {
     setCarrinho((atual) => {
@@ -400,12 +416,22 @@ export function TelaDeVenda({ produtos }: { produtos: ProdutoParaVenda[] }) {
             </div>
           )}
 
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
             <CampoDinheiro
               id="desconto"
               rotulo="Desconto"
               value={desconto}
               onChange={(e) => setDesconto(e.target.value)}
+              erro={
+                descontoAcimaDoTeto
+                  ? `Seu limite é ${DESCONTO_MAXIMO[papel]}% — no máximo ${formatarCentavos(tetoCentavos)} nesta venda.`
+                  : undefined
+              }
+              dica={
+                DESCONTO_MAXIMO[papel] < 100 && !descontoAcimaDoTeto
+                  ? `Até ${DESCONTO_MAXIMO[papel]}% do valor da venda.`
+                  : undefined
+              }
             />
           </div>
         </fieldset>
