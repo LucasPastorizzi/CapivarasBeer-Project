@@ -86,6 +86,7 @@ export async function buscarVenda(numero: number, papel: Papel) {
     where: { numero, ...recorte },
     include: {
       usuario: { select: { nome: true } },
+      canceladaPor: { select: { nome: true } },
       caixa: {
         select: {
           id: true,

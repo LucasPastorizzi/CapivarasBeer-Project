@@ -29,6 +29,7 @@ model Usuario {
 
   caixasAbertos     Caixa[]
   vendas            Venda[]
+  vendasCanceladas  Venda[]            @relation("VendasCanceladas")
   movimentosEstoque MovimentoEstoque[]
   movimentosCaixa   MovimentoCaixa[]
 
@@ -159,8 +160,14 @@ model Venda {
   criadoEm       DateTime  @default(now())
   canceladaEm    DateTime?
 
+  /// Quem cancelou e por quê. Cancelamento mexe em dinheiro e em estoque:
+  /// sem nome e motivo gravados, o buraco no caixa não tem a quem perguntar.
+  canceladaPorId     String?
+  motivoCancelamento String?
+
   caixa             Caixa              @relation(fields: [caixaId], references: [id])
   usuario           Usuario            @relation(fields: [usuarioId], references: [id])
+  canceladaPor      Usuario?           @relation("VendasCanceladas", fields: [canceladaPorId], references: [id])
   itens             ItemVenda[]
   movimentosEstoque MovimentoEstoque[]
 

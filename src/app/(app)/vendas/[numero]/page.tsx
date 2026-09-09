@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CancelarVenda } from "@/components/cancelar-venda";
 import { Aviso, Linha, Painel } from "@/components/ui";
 import { exigirSessao } from "@/lib/autenticacao";
 import { formatarCentavos } from "@/lib/dinheiro";
@@ -53,7 +54,9 @@ export default async function PaginaVenda({
       {cancelada && (
         <Aviso tom="erro">
           Venda cancelada
-          {venda.canceladaEm && ` em ${dataHora.format(venda.canceladaEm)}`}. O
+          {venda.canceladaEm && ` em ${dataHora.format(venda.canceladaEm)}`}
+          {venda.canceladaPor && ` por ${venda.canceladaPor.nome}`}
+          {venda.motivoCancelamento && `: ${venda.motivoCancelamento}`}. O
           estoque dos itens foi devolvido e ela não entra em nenhum relatório.
         </Aviso>
       )}
@@ -116,6 +119,21 @@ export default async function PaginaVenda({
             valor={venda.caixa.status === "ABERTO" ? "Aberto" : "Fechado"}
           />
         </Painel>
+
+        {!cancelada && (
+          <Painel titulo="Corrigir">
+            <p className="mb-4 max-w-prose text-sm text-ink-medio">
+              Errou o item, o valor ou o cliente desistiu? Cancelar devolve o
+              estoque e tira o valor do turno — sem apagar a venda, porque o
+              número do cupom já foi para a mão do cliente.
+            </p>
+            <CancelarVenda
+              numero={venda.numero}
+              totalCentavos={venda.totalCentavos}
+              quantidadeDeItens={venda.itens.length}
+            />
+          </Painel>
+        )}
 
         {/* Margem é informação do dono: o balconista não precisa saber quanto
             a loja ganhou em cada venda que ele passou. */}
