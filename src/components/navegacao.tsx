@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   IconeAssistente,
   IconeCaixa,
+  IconeComandas,
   IconeCompras,
   IconeEstoque,
   IconePainel,
@@ -36,6 +37,7 @@ const GRUPOS: { titulo: string; itens: Item[] }[] = [
     titulo: "Balcão",
     itens: [
       { href: "/pdv", rotulo: "Vender", Icone: IconePdv },
+      { href: "/comandas", rotulo: "Comandas", Icone: IconeComandas },
       { href: "/caixa", rotulo: "Caixa", Icone: IconeCaixa },
       { href: "/vendas", rotulo: "Vendas", Icone: IconeVendas },
     ],

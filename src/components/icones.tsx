@@ -120,3 +120,12 @@ export function IconeVendas({ className }: Props) {
     </svg>
   );
 }
+
+export function IconeComandas({ className }: Props) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M12 3.5v17M5.5 20.5h13" />
+      <path d="M6.5 8.5h11l-1.4 4.2a4.3 4.3 0 0 1-8.2 0z" />
+    </svg>
+  );
+}
