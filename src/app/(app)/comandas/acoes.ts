@@ -9,9 +9,6 @@ import { prisma } from "@/lib/prisma";
 
 export type EstadoComanda = { erro?: string; ok?: string };
 
-/** Erro esperado de regra de negócio, distinto de falha técnica. */
-export class ErroDeComanda extends Error {}
-
 const esquemaAbertura = z.object({
   identificacao: z
     .string()
