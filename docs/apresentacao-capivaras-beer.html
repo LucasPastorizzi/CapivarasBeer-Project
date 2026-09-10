@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Capivaras Beer · Sistema de gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&display=swap">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+
+  :root {
+    --preto: #000000;
+    --fundo: #0d0d0e;
+    --superficie: #18181b;
+    --borda: #2e2e2e;
+    --texto: #ffffff;
+    --apoio: #a3a3a3;
+    --fraco: #7a7a7e;
+    --amarelo: #fde047;
+    --ok: #5bcc80;
+    --perigo: #f75d59;
+    --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--preto); color: var(--texto); font-family: var(--sans); }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .slide {
+    width: 1280px; height: 720px;
+    padding: 72px 88px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    display: flex; flex-direction: column;
+    background: var(--preto);
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+
+  /* rodapé constante: quem fez e onde estamos */
+  .rodape {
+    position: absolute; left: 88px; right: 88px; bottom: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--fraco); letter-spacing: 0.02em;
+  }
+  .rodape .n { font-variant-numeric: tabular-nums; }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; text-wrap: balance; letter-spacing: -0.01em; }
+  h1 { font-size: 96px; line-height: 0.95; }
+  h2 { font-size: 64px; line-height: 1.02; margin-bottom: 28px; }
+  h3 { font-size: 30px; line-height: 1.1; }
+  em { font-style: italic; color: var(--amarelo); }
+
+  p { font-size: 22px; line-height: 1.45; color: var(--apoio); max-width: 62ch; }
+  p strong { color: var(--texto); font-weight: 500; }
+  .lead { font-size: 26px; color: var(--texto); max-width: 30ch; }
+
+  .rotulo {
+    font-size: 13px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--fraco); margin-bottom: 20px;
+  }
+
+  .n, .num, td.num, .valor { font-variant-numeric: tabular-nums; }
+
+  /* grelha de módulos */
+  .modulos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 8px; }
+  .modulo { border: 1px solid var(--borda); border-radius: 14px; padding: 22px 22px 20px; background: var(--fundo); }
+  .modulo b { display: block; font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+  .modulo span { font-size: 15px; color: var(--apoio); line-height: 1.35; display: block; }
+  .modulo.destaque { border-color: var(--amarelo); }
+
+  /* duas colunas: texto + exemplo */
+  .duas { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: start; flex: 1; }
+  .lista { display: grid; gap: 18px; margin-top: 8px; }
+  .lista li { list-style: none; font-size: 21px; line-height: 1.4; color: var(--apoio); padding-left: 26px; position: relative; }
+  .lista li::before { content: ""; position: absolute; left: 0; top: 13px; width: 12px; height: 2px; background: var(--amarelo); }
+  .lista li strong { color: var(--texto); font-weight: 500; }
+
+  /* painel de exemplo, imitando o sistema */
+  .painel { border: 1px solid var(--borda); border-radius: 16px; background: var(--superficie); overflow: hidden; }
+  .painel header { padding: 14px 22px; border-bottom: 1px solid var(--borda); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--apoio); font-weight: 500; }
+  .painel .corpo { padding: 20px 22px; }
+  .linha { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; font-size: 18px; }
+  .linha + .linha { border-top: 1px solid var(--borda); }
+  .linha span:first-child { color: var(--apoio); }
+  .linha.total { border-top: 1px solid var(--borda); margin-top: 6px; padding-top: 14px; }
+  .linha.total span { color: var(--texto); font-weight: 600; font-size: 22px; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+  .tag.perigo { background: rgba(247, 93, 89, .14); color: var(--perigo); }
+  .tag.ok { background: rgba(91, 204, 128, .14); color: var(--ok); }
+  .tag.amarelo { background: rgba(253, 224, 71, .14); color: var(--amarelo); }
+  .nota { font-size: 14px; color: var(--fraco); margin-top: 14px; line-height: 1.4; }
+
+  .pilula { display: inline-block; padding: 12px 26px; border-radius: 999px; background: var(--amarelo); color: var(--preto); font-weight: 600; font-size: 19px; }
+  .pilula.vazada { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
+
+  .marca { display: flex; align-items: center; gap: 14px; }
+  .marca svg { width: 44px; height: 44px; }
+
+  .grande { font-family: var(--serif); font-size: 120px; line-height: 1; color: var(--amarelo); letter-spacing: -0.02em; }
+
+  .perguntas { display: grid; gap: 22px; margin-top: 10px; }
+  .perguntas div { font-family: var(--serif); font-size: 38px; line-height: 1.1; color: var(--texto); }
+  .perguntas div small { display: block; font-family: var(--sans); font-size: 17px; color: var(--fraco); margin-top: 6px; }
+
+  .assinatura { display: flex; gap: 48px; margin-top: 36px; }
+  .assinatura div b { display: block; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fraco); margin-bottom: 6px; font-weight: 500; }
+  .assinatura div span { font-size: 20px; }
+
+  .tabela { width: 100%; border-collapse: collapse; font-size: 17px; }
+  .tabela th { text-align: left; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fraco); font-weight: 500; padding: 0 0 12px; border-bottom: 1px solid var(--borda); }
+  .tabela td { padding: 11px 0; border-bottom: 1px solid var(--borda); color: var(--apoio); }
+  .tabela td:first-child { color: var(--texto); font-weight: 500; }
+  .tabela td.num, .tabela th.num { text-align: right; }
+  .tabela tr:last-child td { border-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Capa -->
+<section class="slide" style="justify-content:space-between">
+  <div class="marca">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><circle cx="7.9" cy="8.2" r="2.2"/><path d="M4.4 13.4c0-3.1 2.5-5.4 5.9-5.4h2.4c1.9 0 3.5.7 4.6 1.9l1.7 1.9c.6.6.9 1.3.9 2 0 2.1-2 3.6-4.8 3.6h-4.9c-3.4 0-5.8-1.9-5.8-4Z"/></g><circle cx="13.6" cy="12.1" r="1.05" fill="#000"/><circle cx="19" cy="13.4" r="0.62" fill="#000"/></svg>
+    <span style="font-size:18px;color:var(--apoio)">Capivaras Beer · Lindolfo Collor</span>
+  </div>
+  <div>
+    <h1>O sistema<br>da loja, feito<br>para a <em>noite</em><br>de vocês.</h1>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <p class="lead" style="max-width:40ch">Vendas, mesas, caixa, estoque e relatórios num lugar só — rodando no balcão, com ou sem internet.</p>
+    <div style="text-align:right;font-size:15px;color:var(--fraco)">Apresentação<br><span style="color:var(--texto)">Flypi Enterprise</span></div>
+  </div>
+</section>
+
+<!-- 2 · O problema -->
+<section class="slide">
+  <div class="rotulo">Uma noite de sexta, hoje</div>
+  <h2>Três perguntas que o caderno<br>não responde.</h2>
+  <div class="perguntas">
+    <div>Quanto sobrou de lucro ontem, depois do custo da mercadoria?<small>Faturamento a gente soma. Lucro exige saber quanto cada cerveja custou.</small></div>
+    <div>O que vai acabar antes do sábado?<small>Descobrir na sexta à noite, com a geladeira vazia, é tarde.</small></div>
+    <div>A mesa 3 já pagou as duas últimas rodadas?<small>Com três mesas e fila no balcão, a memória é o primeiro caixa a quebrar.</small></div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">2 / 13</span></div>
+</section>
+
+<!-- 3 · Módulos -->
+<section class="slide">
+  <div class="rotulo">O que entra no lugar do caderno</div>
+  <h2>Oito telas. Uma noite inteira coberta.</h2>
+  <div class="modulos">
+    <div class="modulo destaque"><b>Vender</b><span>Balcão rápido, pelo teclado e pelo leitor de código de barras.</span></div>
+    <div class="modulo destaque"><b>Comandas</b><span>A conta da mesa: abre, lança rodadas, cobra tudo no fim.</span></div>
+    <div class="modulo"><b>Caixa</b><span>Abertura, sangria e conferência da gaveta no fechamento.</span></div>
+    <div class="modulo"><b>Vendas</b><span>Cada venda com o que foi levado. Cancela com estorno automático.</span></div>
+    <div class="modulo"><b>Estoque</b><span>Entrada, ajuste de contagem e perda — tudo com nome e motivo.</span></div>
+    <div class="modulo"><b>Compras</b><span>O que pedir e quanto, calculado pelo que a loja vende de verdade.</span></div>
+    <div class="modulo"><b>Relatórios</b><span>Faturamento, custo, lucro e margem por período. Sai em planilha.</span></div>
+    <div class="modulo"><b>Assistente</b><span>Pergunte em português. Ele consulta os dados antes de responder.</span></div>
+  </div>
+  <p class="nota" style="margin-top:22px">Os dois primeiros são o balcão: é onde o balconista passa a noite. O resto é do dono.</p>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">3 / 13</span></div>
+</section>
+
+<!-- 4 · Vender -->
+<section class="slide">
+  <div class="rotulo">Balcão</div>
+  <div class="duas">
+    <div>
+      <h2>Vender sem tirar<br>a mão do teclado.</h2>
+      <ul class="lista">
+        <li><strong>Bipou, entrou.</strong> O leitor de código de barras lança o produto direto, sem lista para escolher.</li>
+        <li><strong>Enter adiciona, Ctrl+Enter fecha.</strong> A venda inteira sem encostar no mouse.</li>
+        <li><strong>Troco calculado na hora</strong>, e o botão só libera quando o valor recebido cobre a conta.</li>
+        <li><strong>Baixa de estoque automática</strong>, tudo ou nada: uma venda nunca fica pela metade.</li>
+      </ul>
+    </div>
+    <div class="painel">
+      <header>Carrinho · 2 itens</header>
+      <div class="corpo">
+        <div class="linha"><span>Skol Lata 350ml × 3</span><span class="num">R$ 15,00</span></div>
+        <div class="linha"><span>Água com Gás 500ml × 1</span><span class="num">R$ 3,50</span></div>
+        <div class="linha total"><span>Total</span><span class="num">R$ 18,50</span></div>
+        <div class="linha"><span>Recebido em dinheiro</span><span class="num">R$ 20,00</span></div>
+        <div class="linha"><span>Troco</span><span class="num tag ok">R$ 1,50</span></div>
+        <p class="nota">Exemplo real do sistema em teste.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">4 / 13</span></div>
+</section>
+
+<!-- 5 · Comandas -->
+<section class="slide">
+  <div class="rotulo">Mesas</div>
+  <div class="duas">
+    <div>
+      <h2>A conta da mesa,<br>sem <em>papel</em>.</h2>
+      <ul class="lista">
+        <li><strong>Abre pelo nome:</strong> "Mesa 3", "João". É assim que o balconista acha a conta na segunda rodada.</li>
+        <li><strong>Cada pedido entra direto</strong> — "mais duas long neck" é bipar duas vezes.</li>
+        <li><strong>A cerveja sai do estoque quando é servida</strong>, não quando a conta é paga. A prateleira não mente a noite toda.</li>
+        <li><strong>Fecha virando uma venda</strong>, com forma de pagamento, como qualquer outra.</li>
+      </ul>
+    </div>
+    <div class="painel">
+      <header>Mesa 3 · aberta há 1h20</header>
+      <div class="corpo">
+        <div class="linha"><span>Skol Lata 350ml × 2</span><span class="num">R$ 10,00</span></div>
+        <div class="linha"><span>Heineken Long Neck × 1</span><span class="num">R$ 9,00</span></div>
+        <div class="linha total"><span>Consumo até agora</span><span class="num">R$ 19,00</span></div>
+        <p class="nota">A tela de comandas mostra todas as mesas abertas e quanto ainda tem para receber.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">5 / 13</span></div>
+</section>
+
+<!-- 6 · Caixa -->
+<section class="slide">
+  <div class="rotulo">Fechamento</div>
+  <div class="duas">
+    <div>
+      <h2>A gaveta confere<br>sozinha.</h2>
+      <ul class="lista">
+        <li><strong>Abre com o troco inicial</strong>, registra sangria e reforço ao longo da noite.</li>
+        <li><strong>No fechamento, o operador conta o dinheiro</strong> e o sistema diz se sobrou ou faltou — enquanto ele ainda está com a gaveta aberta na frente.</li>
+        <li><strong>Pix e cartão não entram na gaveta.</strong> O sistema separa isso, que é a causa clássica da "quebra" que não existe.</li>
+      </ul>
+    </div>
+    <div class="painel">
+      <header>O que deve estar na gaveta</header>
+      <div class="corpo">
+        <div class="linha"><span>Troco inicial</span><span class="num">R$ 150,00</span></div>
+        <div class="linha"><span>Vendas em dinheiro</span><span class="num">R$ 68,50</span></div>
+        <div class="linha"><span>Sangria — depósito</span><span class="num">− R$ 50,00</span></div>
+        <div class="linha total"><span>Esperado</span><span class="num">R$ 168,50</span></div>
+        <div class="linha"><span>Contado na gaveta</span><span class="num">R$ 165,00</span></div>
+        <div class="linha"><span>Diferença</span><span class="tag perigo">Faltou R$ 3,50</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">6 / 13</span></div>
+</section>
+
+<!-- 7 · Compras -->
+<section class="slide">
+  <div class="rotulo">Estoque e reposição</div>
+  <div class="duas">
+    <div>
+      <h2>Ele diz o que comprar<br><em>antes</em> de acabar.</h2>
+      <ul class="lista">
+        <li><strong>Calcula pelo giro real</strong> das últimas quatro semanas — não por um "mínimo" chutado uma vez.</li>
+        <li><strong>Sabe que sábado vende mais que terça</strong>, e que domingo e segunda a loja não abre.</li>
+        <li><strong>Arredonda para a caixa do fornecedor:</strong> ninguém pede 47 latas.</li>
+        <li><strong>Soma o custo da lista</strong> e sai em planilha para levar ao fornecedor.</li>
+      </ul>
+    </div>
+    <div class="painel">
+      <header>Pedir ao fornecedor · 2 semanas</header>
+      <div class="corpo">
+        <table class="tabela">
+          <tr><th>Produto</th><th class="num">Tem</th><th>Acaba</th><th class="num">Pedir</th></tr>
+          <tr><td>Gelo 2kg</td><td class="num">6</td><td><span class="tag amarelo">sáb 05/09</span></td><td class="num">20</td></tr>
+          <tr><td>Brahma Lata</td><td class="num">9</td><td><span class="tag amarelo">ter 08/09</span></td><td class="num">36</td></tr>
+          <tr><td>Coca-Cola Lata</td><td class="num">18</td><td>sáb 12/09</td><td class="num">30</td></tr>
+          <tr><td>Skol Lata</td><td class="num">22</td><td>passa do período</td><td class="num">24</td></tr>
+        </table>
+        <div class="linha total"><span>Custo da lista</span><span class="num">R$ 703,40</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">7 / 13</span></div>
+</section>
+
+<!-- 8 · Relatórios -->
+<section class="slide">
+  <div class="rotulo">Relatórios</div>
+  <div class="duas">
+    <div>
+      <h2>Lucro de verdade,<br>não só faturamento.</h2>
+      <ul class="lista">
+        <li><strong>Custo gravado no momento da venda.</strong> Se o fornecedor reajustar, o lucro do mês passado continua sendo o que foi.</li>
+        <li><strong>Comparação automática</strong> com o período anterior: semana contra semana, mês contra mês.</li>
+        <li><strong>Ranking por lucro, não por venda.</strong> Gelo de coco rende mais que muita cerveja.</li>
+        <li><strong>Planilha pronta</strong> para o contador, com um clique.</li>
+      </ul>
+    </div>
+    <div class="painel">
+      <header>Agosto</header>
+      <div class="corpo">
+        <div class="linha"><span>Faturamento</span><span class="num">R$ 5.187,00</span></div>
+        <div class="linha"><span>Custo da mercadoria</span><span class="num">R$ 3.066,25</span></div>
+        <div class="linha total"><span>Lucro bruto</span><span class="num" style="color:var(--ok)">R$ 2.120,75</span></div>
+        <div class="linha"><span>Margem</span><span class="num">40,9%</span></div>
+        <div class="linha"><span>Ticket médio</span><span class="num">R$ 35,05</span></div>
+        <p class="nota">Dados de demonstração.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">8 / 13</span></div>
+</section>
+
+<!-- 9 · Assistente -->
+<section class="slide">
+  <div class="rotulo">Assistente</div>
+  <h2>Pergunte em português.<br>Ele responde com os <em>seus</em> números.</h2>
+  <div class="duas" style="margin-top:8px">
+    <div>
+      <ul class="lista">
+        <li><strong>"Como foi o movimento este mês?"</strong></li>
+        <li><strong>"Qual produto me dá mais lucro?"</strong></li>
+        <li><strong>"O que preciso comprar essa semana?"</strong></li>
+        <li><strong>"Quanto tem na gaveta agora?"</strong></li>
+      </ul>
+      <p class="nota" style="margin-top:28px;font-size:17px">Todo número que ele diz vem de uma consulta ao banco da loja. Ele não estima, não chuta e não inventa.</p>
+    </div>
+    <div class="painel">
+      <header>Regras do assistente</header>
+      <div class="corpo">
+        <div class="linha"><span>Consulta vendas, estoque, caixa, margem</span><span class="tag ok">lê</span></div>
+        <div class="linha"><span>Registra venda ou muda preço</span><span class="tag perigo">nunca</span></div>
+        <div class="linha"><span>Ajusta estoque ou fecha caixa</span><span class="tag perigo">nunca</span></div>
+        <p class="nota">Quem escreve no sistema continua sendo a pessoa, pelas telas. O assistente só responde.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">9 / 13</span></div>
+</section>
+
+<!-- 10 · Permissões -->
+<section class="slide">
+  <div class="rotulo">Quem faz o quê</div>
+  <h2>O balconista vende.<br>O dono vê tudo.</h2>
+  <div class="duas" style="margin-top:8px">
+    <div class="painel">
+      <header>Balconista</header>
+      <div class="corpo">
+        <div class="linha"><span>Vender e abrir comanda</span><span class="tag ok">sim</span></div>
+        <div class="linha"><span>Abrir e fechar o caixa</span><span class="tag ok">sim</span></div>
+        <div class="linha"><span>Ver as vendas do próprio turno</span><span class="tag ok">sim</span></div>
+        <div class="linha"><span>Desconto</span><span class="tag amarelo">até 10%</span></div>
+        <div class="linha"><span>Faturamento, lucro, relatórios</span><span class="tag perigo">não</span></div>
+        <div class="linha"><span>Cancelar venda de turno fechado</span><span class="tag perigo">não</span></div>
+      </div>
+    </div>
+    <div>
+      <ul class="lista">
+        <li><strong>O limite de desconto existe por um motivo:</strong> desconto é o jeito mais silencioso de tirar dinheiro do caixa — a venda fecha, o estoque baixa, e nunca aparece como falta.</li>
+        <li><strong>Todo cancelamento fica com nome e motivo.</strong> O buraco no caixa sempre tem a quem perguntar.</li>
+        <li><strong>Toda mudança de estoque tem origem:</strong> venda, comanda, entrada, ajuste ou perda. Meses depois, dá para saber por que a contagem mudou.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">10 / 13</span></div>
+</section>
+
+<!-- 11 · Onde roda -->
+<section class="slide">
+  <div class="rotulo">Como funciona na loja</div>
+  <div class="duas">
+    <div>
+      <h2>Roda no notebook<br>do balcão.</h2>
+      <ul class="lista">
+        <li><strong>Internet caiu, a loja continua vendendo.</strong> O sistema e o banco de dados ficam na máquina.</li>
+        <li><strong>Liga sozinho</strong> quando o computador liga. Ninguém precisa lembrar de abrir nada.</li>
+        <li><strong>Backup todo dia, verificado.</strong> A cópia é testada antes de contar como cópia, e vai para pendrive ou nuvem.</li>
+        <li><strong>O celular do dono abre pelo Wi-Fi da loja</strong> — conferir o caixa sem ocupar o balcão.</li>
+      </ul>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:20px">
+      <div class="grande">0</div>
+      <p class="lead" style="max-width:26ch">mensalidade. O sistema é da loja, instalado na loja.</p>
+      <p class="nota" style="font-size:16px">Instala-se como aplicativo: ícone na área de trabalho, janela própria, sem barra de endereço para fechar sem querer no meio de uma venda.</p>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">11 / 13</span></div>
+</section>
+
+<!-- 12 · Demonstração -->
+<section class="slide">
+  <div class="rotulo">Veja funcionando agora</div>
+  <h2>Abra no celular.<br>Está no ar.</h2>
+  <div class="duas" style="margin-top:8px;align-items:center">
+    <div>
+      <p style="font-size:30px;color:var(--texto);max-width:none;font-family:var(--sans);font-weight:500;letter-spacing:-0.01em">capivaras-beer-project<span style="color:var(--fraco)">.vercel.app</span></p>
+      <div class="assinatura">
+        <div><b>Entrar como dono</b><span>dono@capivarasbeer.com.br</span></div>
+        <div><b>Senha</b><span>capivaras123</span></div>
+      </div>
+      <p class="nota" style="margin-top:28px;font-size:16px">É uma vitrine com dados fictícios — uma faixa amarela avisa em toda tela. Pode registrar venda, abrir mesa, fechar caixa: nada ali é a loja de verdade.</p>
+    </div>
+    <div class="painel">
+      <header>Roteiro de 5 minutos</header>
+      <div class="corpo">
+        <div class="linha"><span>1. Vender — bipe "skol" três vezes e feche em dinheiro</span></div>
+        <div class="linha"><span>2. Comandas — abra a "Mesa 3" e lance uma rodada</span></div>
+        <div class="linha"><span>3. Caixa — veja o esperado na gaveta mudar</span></div>
+        <div class="linha"><span>4. Compras — veja o que acaba esta semana</span></div>
+        <div class="linha"><span>5. Assistente — pergunte "como foi o mês?"</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>Flypi Enterprise</span><span class="n">12 / 13</span></div>
+</section>
+
+<!-- 13 · Próximos passos -->
+<section class="slide" style="justify-content:space-between">
+  <div>
+    <div class="rotulo">Para começar</div>
+    <h2>Três passos e a loja<br>está rodando.</h2>
+    <ul class="lista" style="margin-top:20px">
+      <li><strong>Instalar no notebook do balcão</strong> — uma visita, o sistema fica ligando sozinho.</li>
+      <li><strong>Bipar cada produto uma vez</strong> para cadastrar os códigos de barras. Meia hora que destrava a venda rápida.</li>
+      <li><strong>Criar os acessos</strong> do dono e de cada balconista, com as senhas de vocês.</li>
+    </ul>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div class="assinatura" style="margin-top:0">
+      <div><b>Flypi Enterprise</b><span>flypi.com.br</span></div>
+      <div><b>Contato</b><span>contato@flypi.com</span></div>
+      <div><b>WhatsApp</b><span class="n">(51) 99876-6944</span></div>
+    </div>
+    <span class="pilula">Vamos começar?</span>
+  </div>
+</section>
+
+</body>
+</html>
